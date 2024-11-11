@@ -1,0 +1,19 @@
+[package]
+name = "RazorAmm"
+version = "1.0.0"
+authors = []
+
+[addresses]
+razor_amm = "_"
+admin = "0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31"
+fee_admin = "0x337d1563a0e6b672d46b41e0e516c47563bb39843ab698bfc16692e64d72011d"
+bob = "0xb0b"
+alice = "0xa11ce"
+
+[dev-addresses]
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", rev="main", subdir = "aptos-move/framework/aptos-framework" }
+AptosStdlib = { git = "https://github.com/aptos-labs/aptos-core.git", rev="main", subdir = "aptos-move/framework/aptos-stdlib" }
+
+[dev-dependencies]
