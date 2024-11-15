@@ -2,11 +2,12 @@
 name = "RazorAmm"
 version = "1.0.0"
 authors = []
+upgrade_policy = "compatible"
 
 [addresses]
 razor_amm = "_"
 admin = "0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31"
-fee_admin = "0x337d1563a0e6b672d46b41e0e516c47563bb39843ab698bfc16692e64d72011d"
+fee_admin = "0x698186149dd784fa8ef5208f7128fda0a4fad9a6c27fe329e3e4ea727d3c5816"
 bob = "0xb0b"
 alice = "0xa11ce"
 
