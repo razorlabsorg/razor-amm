@@ -366,7 +366,7 @@ When zero amount for pool
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_lp_token_supply">lp_token_supply</a>&lt;T: key&gt;(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;T&gt;): u128
+<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_lp_token_supply">lp_token_supply</a>(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): u128
 </code></pre>
 
 
@@ -378,7 +378,7 @@ When zero amount for pool
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_lp_balance_of">lp_balance_of</a>&lt;T: key&gt;(<a href="">account</a>: <b>address</b>, <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;T&gt;): u64
+<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_lp_balance_of">lp_balance_of</a>(<a href="">account</a>: <b>address</b>, <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): u64
 </code></pre>
 
 

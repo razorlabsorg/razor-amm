@@ -9,7 +9,7 @@ ARTIFACTS_LEVEL ?= all
 DEFAULT_FUND_AMOUNT ?= 100000000
 DEFAULT_FUNDER_PRIVATE_KEY ?= 0x0
 DEV_ACCOUNT ?= 380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31
-AMM_ADDRESS ?= 0xdb50057c09b9915cf9f88ad3f4c9278eb369788c63186ef1c4624a5af645d177
+AMM_ADDRESS ?= 0xe94822e5534e9c30d4be9c686c1ad2b4c2799b8cc4ae585d6a34ee2561034d87
 
 # ============================= CLEAN ============================= #
 clean:
@@ -17,14 +17,14 @@ clean:
 
 # ===================== PACKAGE AMM ===================== #
 
-compile-amm:
+compile:
 	aptos move compile \
 	--skip-fetch-latest-git-deps \
 	--save-metadata \
 	--included-artifacts $(ARTIFACTS_LEVEL) \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
 
-test-amm:
+test:
 	aptos move test \
 	--skip-fetch-latest-git-deps \
 	--ignore-compile-warnings \
@@ -32,7 +32,7 @@ test-amm:
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--coverage
 
-publish-amm:
+publish:
 	aptos move deploy-object \
 	--skip-fetch-latest-git-deps \
 	--included-artifacts none \
@@ -40,7 +40,7 @@ publish-amm:
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--address-name razor_amm
 
-upgrade-amm:
+upgrade:
 	aptos move upgrade-object \
 	--skip-fetch-latest-git-deps \
 	--profile razor_amm \
@@ -48,7 +48,7 @@ upgrade-amm:
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--object-address $(AMM_ADDRESS)
 
-doc-amm:
+docs:
 	aptos move document \
 	--skip-fetch-latest-git-deps \
 	--skip-attribute-checks \

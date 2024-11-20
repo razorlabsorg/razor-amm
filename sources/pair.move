@@ -209,6 +209,7 @@ module razor_amm::pair {
     }
   }
 
+  // update reserves and, on the first call per second, price accumulators
   inline fun update(
     lp: &mut Pair,
     balance0: u64,
@@ -228,23 +229,27 @@ module razor_amm::pair {
     };
     lp.block_timestamp_last = now;
 
+    let token0_metadata = fungible_asset::store_metadata(lp.token0);
+    let token1_metadata = fungible_asset::store_metadata(lp.token1);
+
     event::emit(SyncEvent {
       reserve0: (balance0 as u128),
       reserve1: (balance1 as u128),
-      pair_address: liquidity_pool_address(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1)),
+      pair_address: liquidity_pool_address(token0_metadata, token1_metadata),
     })
   }
 
   #[view]
-  public fun lp_token_supply<T: key>(pair: Object<T>): u128 {
+  public fun lp_token_supply(pair: Object<Pair>): u128 {
     option::destroy_some(fungible_asset::supply(pair))
   }
 
   #[view]
-  public fun lp_balance_of<T: key>(account: address, pair: Object<T>): u64 {
+  public fun lp_balance_of(account: address, pair: Object<Pair>): u64 {
     primary_fungible_store::balance(account, pair)
   }
 
+  // if fee is on, mint liquidity equivalent to 8/25 of the growth in sqrt(k)
   inline fun mint_fee(
     pair: Object<Pair>,
   ): bool acquires Pair {
@@ -310,6 +315,8 @@ module razor_amm::pair {
     fungible_asset::deposit_with_ref(transfer_ref, acc_store, lp_coins);
   }
 
+  // this low-level function should be called from a contract which performs important safety checks
+  // Ideally only friends of this module can call this function
   public(friend) fun mint(
     sender: &signer,
     fungible_token0: FungibleAsset,
@@ -366,8 +373,10 @@ module razor_amm::pair {
     // feeOn
     if (fee_on) lp.k_last = (balance0 as u128) * (balance1 as u128);
 
+    let pair_address = liquidity_pool_address(token0, token1);
+
     event::emit(MintEvent {
-      pair: liquidity_pool_address(token0, token1),
+      pair: pair_address,
       lp_amount,
       sender: sender_address,
       amount0,

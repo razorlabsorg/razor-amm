@@ -118,7 +118,7 @@ Contract is needs to be paused first
 
 
 
-<pre><code><b>const</b> <a href="controller.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_controller_FEE_ADMIN">FEE_ADMIN</a>: <b>address</b> = 0x337d1563a0e6b672d46b41e0e516c47563bb39843ab698bfc16692e64d72011d;
+<pre><code><b>const</b> <a href="controller.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_controller_FEE_ADMIN">FEE_ADMIN</a>: <b>address</b> = 0x698186149dd784fa8ef5208f7128fda0a4fad9a6c27fe329e3e4ea727d3c5816;
 </code></pre>
 
 
