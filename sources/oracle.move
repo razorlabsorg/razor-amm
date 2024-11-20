@@ -24,8 +24,8 @@ module razor_amm::oracle {
 
   struct Observation has copy, drop, store {
     timestamp: u64,
-    price_0_cummulative: u128,
-    price_1_cummulative: u128,
+    price_0_cumulative: u128,
+    price_1_cumulative: u128,
   }
 
   struct BlockInfo has copy, drop, store {
@@ -77,10 +77,10 @@ module razor_amm::oracle {
       return false
     };
 
-    let (price_0_cummulative, price_1_cummulative, _) = oracle_library::current_cummulative_prices(pair);
+    let (price_0_cumulative, price_1_cumulative, _) = oracle_library::current_cumulative_prices(pair);
 
-    observation.price_0_cummulative = price_0_cummulative;
-    observation.price_1_cummulative = price_1_cummulative;
+    observation.price_0_cumulative = price_0_cumulative;
+    observation.price_1_cumulative = price_1_cumulative;
     observation.timestamp = timestamp::now_seconds();
 
     true
@@ -99,12 +99,12 @@ module razor_amm::oracle {
   }
 
   fun compute_amount_out(
-    price_cummulative_start: u128,
-    price_cummulative_end: u128,
+    price_cumulative_start: u128,
+    price_cumulative_end: u128,
     time_elapsed: u64,
     amount_in: u64,
   ): u64 {
-    let price_average = (price_cummulative_end - price_cummulative_start) / (time_elapsed as u128);
+    let price_average = (price_cumulative_end - price_cumulative_start) / (time_elapsed as u128);
     let amount_out = price_average * (amount_in as u128);
 
     (amount_out as u64)
@@ -121,7 +121,7 @@ module razor_amm::oracle {
     };
 
     let pair_observations = borrow_global<Oracle>(@razor_amm).pair_observations;
-    let (price_0_cummulative, price_1_cummulative, _) = oracle_library::current_cummulative_prices(pair);
+    let (price_0_cumulative, price_1_cumulative, _) = oracle_library::current_cumulative_prices(pair);
 
     let observation = simple_map::borrow(&pair_observations, &pair);
     let time_elapsed = timestamp::now_seconds() - observation.timestamp;
@@ -129,9 +129,9 @@ module razor_amm::oracle {
     let (token0, _) = swap_library::sort_tokens(token_in, token_out);
 
     if (token0 == token_in) {
-      return compute_amount_out(observation.price_0_cummulative, price_0_cummulative, time_elapsed, amount_in)
+      return compute_amount_out(observation.price_0_cumulative, price_0_cumulative, time_elapsed, amount_in)
     } else {
-      return compute_amount_out(observation.price_1_cummulative, price_1_cummulative, time_elapsed, amount_in)
+      return compute_amount_out(observation.price_1_cumulative, price_1_cumulative, time_elapsed, amount_in)
     }
   }
 

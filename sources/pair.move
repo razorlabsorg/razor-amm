@@ -54,8 +54,8 @@ module razor_amm::pair {
     token1: Object<FungibleStore>,
     lp_token_refs: LPTokenRefs,
     block_timestamp_last: u64,
-    price_0_cummulative_last: u128,
-    price_1_cummulative_last: u128,
+    price_0_cumulative_last: u128,
+    price_1_cumulative_last: u128,
     k_last: u128,
     locked: bool,
   }
@@ -127,21 +127,21 @@ module razor_amm::pair {
   }
 
   #[view]
-  public fun get_cummulative_prices(pair: Object<Pair>): (u128, u128) acquires Pair {
+  public fun get_cumulative_prices(pair: Object<Pair>): (u128, u128) acquires Pair {
     let pair_data = pair_data(&pair);
-    (pair_data.price_0_cummulative_last, pair_data.price_1_cummulative_last)
+    (pair_data.price_0_cumulative_last, pair_data.price_1_cumulative_last)
   }
 
   #[view]
-  public fun price_0_cummulative_last(pair: Object<Pair>): u128 acquires Pair {
+  public fun price_0_cumulative_last(pair: Object<Pair>): u128 acquires Pair {
     let pair_data = pair_data(&pair);
-    pair_data.price_0_cummulative_last
+    pair_data.price_0_cumulative_last
   }
 
   #[view]
-  public fun price_1_cummulative_last(pair: Object<Pair>): u128 acquires Pair {
+  public fun price_1_cumulative_last(pair: Object<Pair>): u128 acquires Pair {
     let pair_data = pair_data(&pair);
-    pair_data.price_1_cummulative_last
+    pair_data.price_1_cumulative_last
   }
 
   #[view]
@@ -185,8 +185,8 @@ module razor_amm::pair {
       token1: create_token_store(pair_signer, token1),
       lp_token_refs: create_lp_token_refs(pair_constructor_ref),
       block_timestamp_last: 0,
-      price_0_cummulative_last: 0,
-      price_1_cummulative_last: 0,
+      price_0_cumulative_last: 0,
+      price_1_cumulative_last: 0,
       k_last: 0,
       locked: false,
     });
@@ -221,11 +221,11 @@ module razor_amm::pair {
     let time_elapsed = ((now - lp.block_timestamp_last) as u128);
     if (time_elapsed > 0 && reserve0 != 0 && reserve1 != 0) {
       // allow overflow u128
-      let price_0_cummulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve1, reserve0)) * time_elapsed;
-      lp.price_0_cummulative_last = math::overflow_add(lp.price_0_cummulative_last, price_0_cummulative_last_delta);
+      let price_0_cumulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve1, reserve0)) * time_elapsed;
+      lp.price_0_cumulative_last = math::overflow_add(lp.price_0_cumulative_last, price_0_cumulative_last_delta);
 
-      let price_1_cummulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve0, reserve1)) * time_elapsed;
-      lp.price_1_cummulative_last = math::overflow_add(lp.price_1_cummulative_last, price_1_cummulative_last_delta);
+      let price_1_cumulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve0, reserve1)) * time_elapsed;
+      lp.price_1_cumulative_last = math::overflow_add(lp.price_1_cumulative_last, price_1_cumulative_last_delta);
     };
     lp.block_timestamp_last = now;
 
@@ -508,7 +508,7 @@ module razor_amm::pair {
     let balance1_adjusted = (balance1 as u128) * 10000 - (amount1_in as u128) * (30);
     let balance01_old_not_scaled = (reserve0 as u128) * (reserve1 as u128);
     let scale = 100000000;
-    // should be: new_reserve0 * new_reserve1 > old_reserve0 * old_eserve_y
+    // should be: new_reserve0 * new_reserve1 > old_reserve0 * old_reserve_y
     // gas saving
     if (
       math::is_overflow_mul(balance0_adjusted, balance1_adjusted)

@@ -15,11 +15,11 @@ module razor_amm::oracle_library {
     timestamp::now_seconds()
   }
 
-  // produces the cumulative price using counterfactuals to save gas and avoid a call to sync.
+  // produces the cumulative price using counter-factuals to save gas and avoid a call to sync.
   #[view]
-  public fun current_cummulative_prices(pair: Object<Pair>): (u128, u128, u64) {
+  public fun current_cumulative_prices(pair: Object<Pair>): (u128, u128, u64) {
     let block_timestamp = current_block_timestamp();
-    let (price0, price1) = pair::get_cummulative_prices(pair);
+    let (price0, price1) = pair::get_cumulative_prices(pair);
 
     let (reserve0, reserve1, block_timestamp_last) = pair::get_reserves(pair);
     if (block_timestamp_last != block_timestamp) {
