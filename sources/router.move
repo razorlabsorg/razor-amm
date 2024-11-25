@@ -579,6 +579,121 @@ module razor_amm::router {
     };
   }
 
+  //===================== Legacy Coin Functions ==========================================
+  /* 
+   * These functions will probably be unused in the frontend and may be removed in the future.
+   * We are keeping them for now for compatibility with tokens based on the legacy Coin standard.
+   */
+  public entry fun swap_exact_coin_for_tokens<CoinType>(
+    sender: &signer,
+    amount_coin: u64,
+    amount_out_min: u64,
+    path: vector<address>,
+    to: address,
+    deadline: u64,
+  ) {
+    ensure(deadline);
+
+    let coin_object = option::destroy_some(coin::paired_metadata<CoinType>());
+    let coin_address = object::object_address(&coin_object);
+    assert!(*vector::borrow(&path, 0) == coin_address, ERROR_INVALID_PATH);
+
+    let sender_addr = signer::address_of(sender);
+    let length = vector::length(&path);
+    let current_amount_in = amount_coin;
+
+    // Handle coin wrapping only for the first swap
+    let coin_object_balance = primary_fungible_store::balance(sender_addr, coin_object);
+    if (coin_object_balance < amount_coin) {
+      let amount_coin_to_deposit = amount_coin - coin_object_balance;
+      wrap_coin<CoinType>(sender, amount_coin_to_deposit);
+    };
+
+    // First swap (coin to first token)
+    let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, 1));
+    let in = primary_fungible_store::withdraw(sender, coin_object, current_amount_in);
+    let out = swap(sender, in, to_token, to);
+    current_amount_in = fungible_asset::amount(&out);
+    primary_fungible_store::deposit(to, out);
+
+    // Handle remaining swaps if any
+    let i = 1;
+    while (i < length - 1) {
+      let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, i));
+      let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i + 1));
+      let in = primary_fungible_store::withdraw(sender, from_token, current_amount_in);
+      let out = swap(sender, in, to_token, to);
+      
+      // Only check final output amount against minimum
+      if (i == length - 2) {
+        assert!(fungible_asset::amount(&out) >= amount_out_min, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
+      };
+        
+      current_amount_in = fungible_asset::amount(&out);
+      primary_fungible_store::deposit(to, out);
+      i = i + 1;
+    }
+  }
+
+  public entry fun swap_coin_for_exact_tokens<CoinType>(
+    sender: &signer,
+    amount_coin_max: u64,
+    amount_out: u64,
+    path: vector<address>,
+    to: address,
+    deadline: u64,
+  ) {
+    ensure(deadline);
+    let coin_object = option::destroy_some(coin::paired_metadata<CoinType>());
+    let coin_address = object::object_address(&coin_object);
+    assert!(*vector::borrow(&path, 0) == coin_address, ERROR_INVALID_PATH);
+    let sender_addr = signer::address_of(sender);
+
+    // Calculate amounts backwards first
+    let i = vector::length(&path) - 1;
+    let current_amount_out = amount_out;
+    let amounts = vector::empty<u64>();
+
+    while (i > 0) {
+        let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, i - 1));
+        let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i));
+        let (token0, token1) = swap_library::sort_tokens(from_token, to_token);
+        let pair = pair::liquidity_pool(token0, token1);
+        let (reserve_in, reserve_out, _) = pair::get_reserves(pair);
+        let amount_in = swap_library::get_amount_in(current_amount_out, reserve_in, reserve_out);
+        vector::push_back(&mut amounts, amount_in);
+        current_amount_out = amount_in;
+        i = i - 1;
+    };
+
+    // Check if first amount (MOVE amount) is within limits
+    let coin_amount = *vector::borrow(&amounts, vector::length(&amounts) - 1);
+    assert!(coin_amount <= amount_coin_max, ERROR_INSUFFICIENT_INPUT_AMOUNT);
+
+    // Handle coin wrapping only for the first swap
+    let coin_object_balance = primary_fungible_store::balance(sender_addr, coin_object);
+    if (coin_object_balance < coin_amount) {
+      let amount_coin_to_deposit = coin_amount - coin_object_balance;
+      wrap_coin<CoinType>(sender, amount_coin_to_deposit);
+    };
+
+    // Execute swaps forward
+    i = 0;
+    while (i < vector::length(&path) - 1) {
+        let from_token = if (i == 0) {
+            coin_object
+        } else {
+            object::address_to_object<Metadata>(*vector::borrow(&path, i))
+        };
+        let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i + 1));
+        let amount_in = *vector::borrow(&amounts, vector::length(&amounts) - i - 1);
+        let in = primary_fungible_store::withdraw(sender, from_token, amount_in);
+        let out = swap(sender, in, to_token, to);
+        primary_fungible_store::deposit(to, out);
+        i = i + 1;
+    };
+  }
+
   inline fun path_to_object_path(path: vector<address>): vector<Object<Metadata>> {
     let object_path = vector::empty<Object<Metadata>>();
     let i = 0;
