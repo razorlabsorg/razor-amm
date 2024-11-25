@@ -6,8 +6,8 @@ upgrade_policy = "compatible"
 
 [addresses]
 razor_amm = "_"
-admin = "0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31"
-fee_admin = "0x698186149dd784fa8ef5208f7128fda0a4fad9a6c27fe329e3e4ea727d3c5816"
+admin = "0x4b1bf00e6b8dc4a7bc00f9dc02e5da424236afad275c8833b48c54b0496fd283"
+fee_admin = "0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839"
 bob = "0xb0b"
 alice = "0xa11ce"
 
