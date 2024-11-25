@@ -455,10 +455,12 @@ module razor_amm::pair {
   ): (FungibleAsset, FungibleAsset) acquires Pair {
     assert_locked(pair);
     controller::assert_unpaused();
+
     let amount0_in = fungible_asset::amount(&token0_in);
     let amount1_in = fungible_asset::amount(&token1_in);
     assert!(amount0_in > 0 || amount1_in > 0, ERROR_INSUFFICIENT_INPUT_AMOUNT);
     assert!(amount0_out > 0 || amount1_out > 0, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
+    
     let lp = pair_data_mut(&pair);
     let store0 = lp.token0;
     let store1 = lp.token1;

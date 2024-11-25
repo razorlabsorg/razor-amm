@@ -36,14 +36,12 @@ publish:
 	aptos move deploy-object \
 	--skip-fetch-latest-git-deps \
 	--included-artifacts none \
-	--profile razor_amm \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--address-name razor_amm
 
 upgrade:
 	aptos move upgrade-object \
 	--skip-fetch-latest-git-deps \
-	--profile razor_amm \
 	--address-name razor_amm \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--object-address $(AMM_ADDRESS)

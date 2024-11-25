@@ -167,7 +167,10 @@ module razor_amm::swap_library {
       let (reserve0, reserve1, _) = pair::get_reserves(pair);
       
       // Determine correct reserve order based on input token
-      let (reserve_in, reserve_out) = if (token_a == token0) {
+      // Compare addresses instead of objects
+      let token_a_addr = object::object_address(&token_a);
+      let token0_addr = object::object_address(&token0);
+      let (reserve_in, reserve_out) = if (token_a_addr == token0_addr) {
         (reserve0, reserve1)
       } else {
         (reserve1, reserve0)
@@ -209,11 +212,15 @@ module razor_amm::swap_library {
       let (reserve0, reserve1, _) = pair::get_reserves(pair);
       
       // Determine correct reserve order based on input token
-      let (reserve_in, reserve_out) = if (token_a == token0) {
+      // Compare addresses instead of objects
+      let token_a_addr = object::object_address(&token_a);
+      let token0_addr = object::object_address(&token0);
+      let (reserve_in, reserve_out) = if (token_a_addr == token0_addr) {
         (reserve0, reserve1)
       } else {
         (reserve1, reserve0)
       };
+
       let amount = *vector::borrow(&amounts, k);
       let amount_in = get_amount_in(amount, reserve_in, reserve_out);
       *vector::borrow_mut(&mut amounts, k - 1) = amount_in;
