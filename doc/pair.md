@@ -15,9 +15,9 @@
 -  [Constants](#@Constants_0)
 -  [Function `get_reserves`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_reserves)
 -  [Function `get_k_last`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_k_last)
--  [Function `get_cummulative_prices`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_cummulative_prices)
--  [Function `price_0_cummulative_last`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_0_cummulative_last)
--  [Function `price_1_cummulative_last`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_1_cummulative_last)
+-  [Function `get_cumulative_prices`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_cumulative_prices)
+-  [Function `price_0_cumulative_last`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_0_cumulative_last)
+-  [Function `price_1_cumulative_last`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_1_cumulative_last)
 -  [Function `balance0`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_balance0)
 -  [Function `balance1`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_balance1)
 -  [Function `balance_of`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_balance_of)
@@ -264,38 +264,38 @@ When zero amount for pool
 
 
 
-<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_cummulative_prices"></a>
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_cumulative_prices"></a>
 
-## Function `get_cummulative_prices`
+## Function `get_cumulative_prices`
 
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_cummulative_prices">get_cummulative_prices</a>(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): (u128, u128)
+<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_get_cumulative_prices">get_cumulative_prices</a>(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): (u128, u128)
 </code></pre>
 
 
 
-<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_0_cummulative_last"></a>
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_0_cumulative_last"></a>
 
-## Function `price_0_cummulative_last`
+## Function `price_0_cumulative_last`
 
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_0_cummulative_last">price_0_cummulative_last</a>(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): u128
+<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_0_cumulative_last">price_0_cumulative_last</a>(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): u128
 </code></pre>
 
 
 
-<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_1_cummulative_last"></a>
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_1_cumulative_last"></a>
 
-## Function `price_1_cummulative_last`
+## Function `price_1_cumulative_last`
 
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_1_cummulative_last">price_1_cummulative_last</a>(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): u128
+<b>public</b> <b>fun</b> <a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_price_1_cumulative_last">price_1_cumulative_last</a>(<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair">pair</a>: <a href="_Object">object::Object</a>&lt;<a href="pair.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_pair_Pair">pair::Pair</a>&gt;): u128
 </code></pre>
 
 

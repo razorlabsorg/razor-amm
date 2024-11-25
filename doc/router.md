@@ -20,6 +20,8 @@
 -  [Function `swap_tokens_for_exact_move`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_tokens_for_exact_move)
 -  [Function `swap_exact_tokens_for_move`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_exact_tokens_for_move)
 -  [Function `swap_move_for_exact_tokens`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_move_for_exact_tokens)
+-  [Function `swap_exact_coin_for_tokens`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_exact_coin_for_tokens)
+-  [Function `swap_coin_for_exact_tokens`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_coin_for_exact_tokens)
 
 
 <pre><code><b>use</b> <a href="">0x1::aptos_coin</a>;
@@ -240,5 +242,27 @@ Transaction expired
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="router.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_move_for_exact_tokens">swap_move_for_exact_tokens</a>(sender: &<a href="">signer</a>, amount_move: u64, amount_out: u64, path: <a href="">vector</a>&lt;<b>address</b>&gt;, <b>to</b>: <b>address</b>, deadline: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="router.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_move_for_exact_tokens">swap_move_for_exact_tokens</a>(sender: &<a href="">signer</a>, amount_move_max: u64, amount_out: u64, path: <a href="">vector</a>&lt;<b>address</b>&gt;, <b>to</b>: <b>address</b>, deadline: u64)
+</code></pre>
+
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_exact_coin_for_tokens"></a>
+
+## Function `swap_exact_coin_for_tokens`
+
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="router.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_exact_coin_for_tokens">swap_exact_coin_for_tokens</a>&lt;CoinType&gt;(sender: &<a href="">signer</a>, amount_coin: u64, amount_out_min: u64, path: <a href="">vector</a>&lt;<b>address</b>&gt;, <b>to</b>: <b>address</b>, deadline: u64)
+</code></pre>
+
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_coin_for_exact_tokens"></a>
+
+## Function `swap_coin_for_exact_tokens`
+
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="router.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_router_swap_coin_for_exact_tokens">swap_coin_for_exact_tokens</a>&lt;CoinType&gt;(sender: &<a href="">signer</a>, amount_coin_max: u64, amount_out: u64, path: <a href="">vector</a>&lt;<b>address</b>&gt;, <b>to</b>: <b>address</b>, deadline: u64)
 </code></pre>
