@@ -75,17 +75,29 @@ module razor_amm::router {
       factory::create_pair(sender, tokenA_addr, tokenB_addr);
     };
 
-    let (amountA, amountB) = swap_library::calc_optimal_coin_values(
-      tokenA, 
-      tokenB, 
-      amountADesired, 
-      amountBDesired, 
-      amountAMin,
-      amountBMin
+    let (token0, token1) = swap_library::sort_tokens(tokenA, tokenB);
+    let (amount0, amount1) = if (token0 == tokenA) {
+        (amountADesired, amountBDesired)
+    } else {
+        (amountBDesired, amountADesired)
+    };
+    let (amount0Min, amount1Min) = if (token0 == tokenA) {
+        (amountAMin, amountBMin)
+    } else {
+        (amountBMin, amountAMin)
+    };
+
+    let (amount0Optimal, amount1Optimal) = swap_library::calc_optimal_coin_values(
+      token0,
+      token1,
+      amount0,
+      amount1,
+      amount0Min,
+      amount1Min
     );
 
-    let asset0 = primary_fungible_store::withdraw(sender, tokenA, amountA);
-    let asset1 = primary_fungible_store::withdraw(sender, tokenB, amountB);
+    let asset0 = primary_fungible_store::withdraw(sender, token0, amount0Optimal);
+    let asset1 = primary_fungible_store::withdraw(sender, token1, amount1Optimal);
 
     pair::mint(sender, asset0, asset1, to);
   }
@@ -139,7 +151,7 @@ module razor_amm::router {
       factory::create_pair(sender, token, move_addr);
     };
 
-    let (amount_token, amount_move) = swap_library::calc_optimal_coin_values(
+    let (amount0, amount1) = swap_library::calc_optimal_coin_values(
       token0,
       token1,
       amount_token_desired,
@@ -149,20 +161,20 @@ module razor_amm::router {
     );
 
     let move_object_balance = primary_fungible_store::balance(sender_addr, move_object);
-    if (move_object_balance < amount_move) {
-      let amount_move_to_deposit = amount_move - move_object_balance;
+    if (move_object_balance < (if (token0 == move_object) { amount0 } else { amount1 })) {
+      let amount_move_to_deposit = (if (token0 == move_object) { amount0 } else { amount1 }) - move_object_balance;
       wrap_move(sender, amount_move_to_deposit);
     };
 
     let (asset0, asset1) = if (token0 == token_object) {
         (
-            primary_fungible_store::withdraw(sender, token_object, amount_token),
-            primary_fungible_store::withdraw(sender, move_object, amount_move)
+            primary_fungible_store::withdraw(sender, token_object, amount0),
+            primary_fungible_store::withdraw(sender, move_object, amount1)
         )
     } else {
         (
-            primary_fungible_store::withdraw(sender, move_object, amount_move),
-            primary_fungible_store::withdraw(sender, token_object, amount_token)
+            primary_fungible_store::withdraw(sender, move_object, amount0),
+            primary_fungible_store::withdraw(sender, token_object, amount1)
         )
     };
 
