@@ -2,6 +2,7 @@ module razor_amm::oracle {
   use std::signer;
 
   use aptos_framework::block;
+  use aptos_framework::event;
   use aptos_framework::fungible_asset::{Self, Metadata};
   use aptos_framework::object::{Self, Object};
   use aptos_framework::timestamp;
@@ -16,11 +17,20 @@ module razor_amm::oracle {
   use razor_amm::oracle_library;
   use razor_amm::pair::{Self, Pair};
 
+  const MAX_U64: u64 = 18446744073709551615;
+
   /// Only admin can call this
   const ERROR_ONLY_ADMIN: u64 = 1;
   /// Index out of bounds
   const ERROR_INDEX_OUT_OF_BOUNDS: u64 = 2;
-
+  /// Time elapsed is zero
+  const ERROR_TIME_ELAPSED_ZERO: u64 = 3;
+  /// Price cumulative end is less than start
+  const ERROR_PRICE_CUMULATIVE_END_LESS_THAN_START: u64 = 4;
+  /// Amount out overflow
+  const ERROR_AMOUNT_OUT_OVERFLOW: u64 = 5;
+  /// Height difference is zero
+  const ERROR_HEIGHT_DIFF_ZERO: u64 = 6;
 
   struct Observation has copy, drop, store {
     timestamp: u64,
@@ -38,6 +48,20 @@ module razor_amm::oracle {
     block_info: BlockInfo,
     pair_observations: SimpleMap<Object<Pair>, Observation>,
     router_tokens: SmartVector<Object<Metadata>>,
+  }
+
+  #[event]
+  struct UpdateEvent has drop, store {
+    pair: address,
+    price_0_cumulative: u128,
+    price_1_cumulative: u128,
+    timestamp: u64,
+  }
+
+  #[event]
+  struct RouterTokenEvent has drop, store {
+    token: address,
+    is_added: bool,
   }
 
   const CYCLE: u64 = 1800; // 30 minutes
@@ -66,11 +90,20 @@ module razor_amm::oracle {
 
   public fun update(tokenA: Object<Metadata>, tokenB: Object<Metadata>): bool acquires Oracle {
     let pair = pair::liquidity_pool(tokenA, tokenB);
-    if (factory::pair_exists(tokenA, tokenB)) {
+    if (!factory::pair_exists(tokenA, tokenB)) {
       return false
     };
 
     let pair_observations = borrow_global_mut<Oracle>(@razor_amm).pair_observations;
+    if (!simple_map::contains_key(&pair_observations, &pair)) {
+        simple_map::add(&mut pair_observations, pair, Observation {
+            timestamp: timestamp::now_seconds(),
+            price_0_cumulative: 0,
+            price_1_cumulative: 0,
+        });
+        return true
+    };
+
     let observation = simple_map::borrow_mut(&mut pair_observations, &pair);
     let time_elapsed = timestamp::now_seconds() - observation.timestamp;
     if (time_elapsed < CYCLE) {
@@ -104,8 +137,13 @@ module razor_amm::oracle {
     time_elapsed: u64,
     amount_in: u64,
   ): u64 {
+    assert!(time_elapsed > 0, ERROR_TIME_ELAPSED_ZERO);
+    assert!(price_cumulative_end >= price_cumulative_start, ERROR_PRICE_CUMULATIVE_END_LESS_THAN_START);
+    
     let price_average = (price_cumulative_end - price_cumulative_start) / (time_elapsed as u128);
     let amount_out = price_average * (amount_in as u128);
+
+    assert!((amount_out as u64) <= MAX_U64, ERROR_AMOUNT_OUT_OVERFLOW);
 
     (amount_out as u64)
   }
@@ -244,14 +282,22 @@ module razor_amm::oracle {
   #[view]
   public fun get_average_block_time(): u64 acquires Oracle {
     let block_info = borrow_global<Oracle>(@razor_amm).block_info;
-    timestamp::now_seconds() - block_info.timestamp / (block::get_current_block_height() - block_info.height)
+    let height_diff = block::get_current_block_height() - block_info.height;
+    assert!(height_diff > 0, ERROR_HEIGHT_DIFF_ZERO);
+    let time_diff = timestamp::now_seconds() - block_info.timestamp;
+    (time_diff / height_diff) as u64
   }
 
   public entry fun add_router_token(sender: &signer, token: Object<Metadata>) acquires Oracle {
     assert!(signer::address_of(sender) == controller::get_admin(), ERROR_ONLY_ADMIN);
     let oracle = borrow_global_mut<Oracle>(@razor_amm);
     let tokens = &mut oracle.router_tokens;
-    smart_vector::push_back(tokens, token)
+    smart_vector::push_back(tokens, token);
+
+    event::emit(RouterTokenEvent {
+      token: object::object_address(&token),
+      is_added: true,
+    });
   }
 
   public entry fun remove_router_token(sender: &signer, token: Object<Metadata>) acquires Oracle {
@@ -260,6 +306,11 @@ module razor_amm::oracle {
     let tokens = &mut oracle.router_tokens;
     let (_, index) = smart_vector::index_of(tokens, &token);
     smart_vector::remove(tokens, index);
+
+    event::emit(RouterTokenEvent {
+      token: object::object_address(&token),
+      is_added: false,
+    });
   }
 
   #[view]

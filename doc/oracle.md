@@ -8,6 +8,8 @@
 -  [Struct `Observation`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_Observation)
 -  [Struct `BlockInfo`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_BlockInfo)
 -  [Resource `Oracle`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_Oracle)
+-  [Struct `UpdateEvent`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_UpdateEvent)
+-  [Struct `RouterTokenEvent`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_RouterTokenEvent)
 -  [Constants](#@Constants_0)
 -  [Function `initialize`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_initialize)
 -  [Function `is_initialized`](#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_is_initialized)
@@ -27,6 +29,7 @@
 
 
 <pre><code><b>use</b> <a href="">0x1::block</a>;
+<b>use</b> <a href="">0x1::event</a>;
 <b>use</b> <a href="">0x1::fungible_asset</a>;
 <b>use</b> <a href="">0x1::math64</a>;
 <b>use</b> <a href="">0x1::object</a>;
@@ -76,9 +79,42 @@
 
 
 
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_UpdateEvent"></a>
+
+## Struct `UpdateEvent`
+
+
+
+<pre><code>#[<a href="">event</a>]
+<b>struct</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_UpdateEvent">UpdateEvent</a> <b>has</b> drop, store
+</code></pre>
+
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_RouterTokenEvent"></a>
+
+## Struct `RouterTokenEvent`
+
+
+
+<pre><code>#[<a href="">event</a>]
+<b>struct</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_RouterTokenEvent">RouterTokenEvent</a> <b>has</b> drop, store
+</code></pre>
+
+
+
 <a id="@Constants_0"></a>
 
 ## Constants
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_MAX_U64"></a>
+
+
+
+<pre><code><b>const</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_MAX_U64">MAX_U64</a>: u64 = 18446744073709551615;
+</code></pre>
+
 
 
 <a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_CYCLE"></a>
@@ -86,6 +122,26 @@
 
 
 <pre><code><b>const</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_CYCLE">CYCLE</a>: u64 = 1800;
+</code></pre>
+
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_AMOUNT_OUT_OVERFLOW"></a>
+
+Amount out overflow
+
+
+<pre><code><b>const</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_AMOUNT_OUT_OVERFLOW">ERROR_AMOUNT_OUT_OVERFLOW</a>: u64 = 5;
+</code></pre>
+
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_HEIGHT_DIFF_ZERO"></a>
+
+Height difference is zero
+
+
+<pre><code><b>const</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_HEIGHT_DIFF_ZERO">ERROR_HEIGHT_DIFF_ZERO</a>: u64 = 6;
 </code></pre>
 
 
@@ -106,6 +162,26 @@ Only admin can call this
 
 
 <pre><code><b>const</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_ONLY_ADMIN">ERROR_ONLY_ADMIN</a>: u64 = 1;
+</code></pre>
+
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_PRICE_CUMULATIVE_END_LESS_THAN_START"></a>
+
+Price cumulative end is less than start
+
+
+<pre><code><b>const</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_PRICE_CUMULATIVE_END_LESS_THAN_START">ERROR_PRICE_CUMULATIVE_END_LESS_THAN_START</a>: u64 = 4;
+</code></pre>
+
+
+
+<a id="0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_TIME_ELAPSED_ZERO"></a>
+
+Time elapsed is zero
+
+
+<pre><code><b>const</b> <a href="oracle.md#0x380cc51342dc20d61af1a05abbd3a4ba718e555ef8c01f1337698180d5ecff31_oracle_ERROR_TIME_ELAPSED_ZERO">ERROR_TIME_ELAPSED_ZERO</a>: u64 = 3;
 </code></pre>
 
 
