@@ -50,7 +50,7 @@ module razor_amm::pair_tests {
     let token0_to_withdraw = primary_fungible_store::withdraw(bob, tokenA, token0_amount);
     let token1_to_withdraw = primary_fungible_store::withdraw(bob, tokenB, token1_amount);
 
-    pair::mint(bob, token0_to_withdraw, token1_to_withdraw, @bob);
+    pair::mint(bob, created_pair, @bob);
 
     let lp_total_supply = pair::lp_token_supply(created_pair);
     let bob_lp_balance = pair::lp_balance_of(@bob, created_pair);
@@ -99,7 +99,7 @@ module razor_amm::pair_tests {
     let token0_to_withdraw = primary_fungible_store::withdraw(bob, tokenA, token0_amount);
     let token1_to_withdraw = primary_fungible_store::withdraw(bob, tokenB, token1_amount);
 
-    pair::mint(bob, token0_to_withdraw, token1_to_withdraw, @bob);
+    pair::mint(bob, created_pair, @bob);
 
     let (tokenA_to_withdraw, tokenB_to_withdraw) = pair::burn(bob, created_pair, expected_liquidity - MINIMUM_LIQUIDITY);
 
@@ -153,7 +153,7 @@ module razor_amm::pair_tests {
 
     let token0_deposit = primary_fungible_store::withdraw(bob, token0, token0_amount);
     let token1_deposit = primary_fungible_store::withdraw(bob, token1, token1_amount);
-    pair::mint(bob, token0_deposit, token1_deposit, @bob);
+    pair::mint(bob, pair, @bob);
 
     // Initial reserves check
     let (initial_reserve0, initial_reserve1, _) = pair::get_reserves(pair);
@@ -247,12 +247,12 @@ module razor_amm::pair_tests {
 
     let token0_deposit = primary_fungible_store::withdraw(bob, token0, token0_amount);
     let token1_deposit = primary_fungible_store::withdraw(bob, token1, token1_amount);
-    pair::mint(bob, token0_deposit, token1_deposit, @bob);
+    pair::mint(bob, pair, @bob);
 
     // Add more liquidity to trigger fee mint
     let token0_deposit2 = primary_fungible_store::withdraw(bob, token0, token0_amount);
     let token1_deposit2 = primary_fungible_store::withdraw(bob, token1, token1_amount);
-    pair::mint(bob, token0_deposit2, token1_deposit2, @bob);
+    pair::mint(bob, pair, @bob);
 
     // Verify fee was minted to fee recipient
     let fee_recipient_balance = pair::lp_balance_of(@admin, pair);
@@ -293,7 +293,7 @@ module razor_amm::pair_tests {
 
     let token0_deposit = primary_fungible_store::withdraw(bob, token0, token0_amount);
     let token1_deposit = primary_fungible_store::withdraw(bob, token1, token1_amount);
-    pair::mint(bob, token0_deposit, token1_deposit, @bob);
+    pair::mint(bob, pair, @bob);
 
     let k_last = pair::get_k_last(pair);
     assert!(k_last > 0, 2);

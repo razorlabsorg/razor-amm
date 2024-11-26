@@ -40,7 +40,6 @@ module razor_amm::pair {
   const ERROR_INSUFFICIENT_LIQUIDITY_BURN: u64 = 23;
   /// When contract K error
   const ERROR_K_ERROR: u64 = 24;
-
   
   struct LPTokenRefs has store {
     burn_ref: BurnRef,
@@ -52,6 +51,8 @@ module razor_amm::pair {
   struct Pair has key {
     token0: Object<FungibleStore>,
     token1: Object<FungibleStore>,
+    reserve0: u64,
+    reserve1: u64,
     lp_token_refs: LPTokenRefs,
     block_timestamp_last: u64,
     price_0_cumulative_last: u128,
@@ -114,8 +115,8 @@ module razor_amm::pair {
   public fun get_reserves(pair: Object<Pair>): (u64, u64, u64) acquires Pair {
     let pair_data = pair_data(&pair);
     (
-      fungible_asset::balance(pair_data.token0),
-      fungible_asset::balance(pair_data.token1),
+      pair_data.reserve0,
+      pair_data.reserve1,
       pair_data.block_timestamp_last,
     )
   }
@@ -183,6 +184,8 @@ module razor_amm::pair {
     move_to(pair_signer, Pair {
       token0: create_token_store(pair_signer, token0),
       token1: create_token_store(pair_signer, token1),
+      reserve0: 0,
+      reserve1: 0,
       lp_token_refs: create_lp_token_refs(pair_constructor_ref),
       block_timestamp_last: 0,
       price_0_cumulative_last: 0,
@@ -220,22 +223,24 @@ module razor_amm::pair {
     let now = timestamp::now_seconds();
     let time_elapsed = ((now - lp.block_timestamp_last) as u128);
     if (time_elapsed > 0 && reserve0 != 0 && reserve1 != 0) {
-      // allow overflow u128
+      // * never overflows, and + overflow is desired
       let price_0_cumulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve1, reserve0)) * time_elapsed;
       lp.price_0_cumulative_last = math::overflow_add(lp.price_0_cumulative_last, price_0_cumulative_last_delta);
 
       let price_1_cumulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve0, reserve1)) * time_elapsed;
       lp.price_1_cumulative_last = math::overflow_add(lp.price_1_cumulative_last, price_1_cumulative_last_delta);
     };
+
     lp.block_timestamp_last = now;
 
     let token0_metadata = fungible_asset::store_metadata(lp.token0);
     let token1_metadata = fungible_asset::store_metadata(lp.token1);
+    let pair_address = liquidity_pool_address(token0_metadata, token1_metadata);
 
     event::emit(SyncEvent {
       reserve0: (balance0 as u128),
       reserve1: (balance1 as u128),
-      pair_address: liquidity_pool_address(token0_metadata, token1_metadata),
+      pair_address,
     })
   }
 
@@ -252,6 +257,8 @@ module razor_amm::pair {
   // if fee is on, mint liquidity equivalent to 8/25 of the growth in sqrt(k)
   inline fun mint_fee(
     pair: Object<Pair>,
+    reserve0: u64,
+    reserve1: u64,
   ): bool acquires Pair {
     let lp_address = object::object_address(&pair);
     let lp = pair_data_mut(&pair);
@@ -260,8 +267,6 @@ module razor_amm::pair {
     let k_last = lp.k_last;
     if (fee_on) {
       if (k_last != 0) {
-        let reserve0 = fungible_asset::balance(lp.token0);
-        let reserve1 = fungible_asset::balance(lp.token1);
         let root_k = math::sqrt(reserve0, reserve1);
         let root_k_last = math::sqrt_128(k_last);
         let total_supply = lp_token_supply(pair);
@@ -269,8 +274,8 @@ module razor_amm::pair {
           let delta_k = ((root_k - root_k_last) as u128);
           // gas saving
           if (math::is_overflow_mul(total_supply, delta_k)) {
-            let numerator = (total_supply as u256) * (delta_k as u256) * (10);
-            let denominator = (root_k as u256) * (20) + (root_k_last as u256);
+            let numerator = (total_supply as u256) * (delta_k as u256) * (8);
+            let denominator = (root_k as u256) * (17) + ((root_k_last as u256) * (8));
             let liquidity = ((numerator / denominator) as u64);
             if (liquidity > 0) {
               mint_internal(pair, fee_to, liquidity);
@@ -281,8 +286,8 @@ module razor_amm::pair {
               });
             };
           } else {
-            let numerator = total_supply * delta_k * 10;
-            let denominator = (root_k as u128) * (20) + (root_k_last as u128);
+            let numerator = total_supply * delta_k * 8;
+            let denominator = (root_k as u128) * (17) + ((root_k_last as u128) * (8));
             let liquidity = ((numerator / denominator) as u64);
             if (liquidity > 0) {
               mint_internal(pair, fee_to, liquidity);
@@ -319,33 +324,26 @@ module razor_amm::pair {
   // Ideally only friends of this module can call this function
   public(friend) fun mint(
     sender: &signer,
-    fungible_token0: FungibleAsset,
-    fungible_token1: FungibleAsset,
+    pair: Object<Pair>,
     to: address,
   ) acquires Pair {
-    let sender_address = signer::address_of(sender);
-    let token0 = fungible_asset::metadata_from_asset(&fungible_token0);
-    let token1 = fungible_asset::metadata_from_asset(&fungible_token1);
-    if (!is_sorted(token0, token1)) {
-      return mint(sender, fungible_token1, fungible_token0, to)
-    };
-
-    let pool = liquidity_pool(token0, token1);
-    assert_locked(pool);
+    assert_locked(pair);
     controller::assert_unpaused();
-    let acc_store = ensure_account_token_store(to, pool);
+    let sender_address = signer::address_of(sender);
+    let (reserve0, reserve1, _) = get_reserves(pair);
+    let balance0 = balance0(pair);
+    let balance1 = balance1(pair);
 
-    let amount0 = fungible_asset::amount(&fungible_token0);
-    let amount1 = fungible_asset::amount(&fungible_token1);
+    let amount0 = balance0 - reserve0;
+    let amount1 = balance1 - reserve1;
 
-    let fee_on = mint_fee(pool);
+    let fee_on = mint_fee(pair, reserve0, reserve1);
 
-    let lp = pair_data_mut(&pool);
-    let reserve0 = fungible_asset::balance(lp.token0);
-    let reserve1 = fungible_asset::balance(lp.token1);
-
-    let total_supply = option::destroy_some(fungible_asset::supply(pool));
+    let lp = pair_data_mut(&pair);
+    
+    let total_supply = lp_token_supply(pair);
     let mint_ref = &lp.lp_token_refs.mint_ref;
+
     let liquidity;
     if (total_supply == 0) {
       assert!(math::sqrt(amount0, amount1) > MINIMUM_LIQUIDITY, ERROR_INSUFFICIENT_LIQUIDITY_MINT);
@@ -357,22 +355,21 @@ module razor_amm::pair {
       let t_amount1 = ((amount1 as u128) * total_supply / (reserve1 as u128) as u64);
       liquidity = math::min(t_amount0, t_amount1);
     };
-    assert!(liquidity > 0, ERROR_INSUFFICIENT_LIQUIDITY_MINT);
 
-    dispatchable_fungible_asset::deposit(lp.token0, fungible_token0);
-    dispatchable_fungible_asset::deposit(lp.token1, fungible_token1);
+    assert!(liquidity > 0, ERROR_INSUFFICIENT_LIQUIDITY_MINT);
     let lp_coins = fungible_asset::mint(mint_ref, liquidity);
+    let acc_store = ensure_account_token_store(to, pair);
 
     let lp_amount = fungible_asset::amount(&lp_coins);
     fungible_asset::deposit_with_ref(&lp.lp_token_refs.transfer_ref, acc_store, lp_coins);
 
-    let balance0 = fungible_asset::balance(lp.token0);
-    let balance1 = fungible_asset::balance(lp.token1);
-    // update interval
+    // update reserves
     update(lp, balance0, balance1, reserve0, reserve1);
     // feeOn
-    if (fee_on) lp.k_last = (balance0 as u128) * (balance1 as u128);
+    if (fee_on) lp.k_last = (reserve0 as u128) * (reserve1 as u128);
 
+    let token0 = fungible_asset::store_metadata(lp.token0);
+    let token1 = fungible_asset::store_metadata(lp.token1);
     let pair_address = liquidity_pool_address(token0, token1);
 
     event::emit(MintEvent {
@@ -395,9 +392,10 @@ module razor_amm::pair {
     assert!(amount > 0, ERROR_ZERO_AMOUNT);
     let sender_addr = signer::address_of(sender);
     let store = ensure_account_token_store(sender_addr, pair);
+    let (reserve0, reserve1, _) = get_reserves(pair);
 
     // feeOn
-    let fee_on = mint_fee(pair);
+    let fee_on = mint_fee(pair, reserve0, reserve1);
 
     // get lp
     let lp = pair_data_mut(&pair);
@@ -642,6 +640,16 @@ module razor_amm::pair {
       mint_ref: fungible_asset::generate_mint_ref(constructor_ref),
       transfer_ref: fungible_asset::generate_transfer_ref(constructor_ref),
     }
+  }
+
+  public(friend) fun deposit_to_pool(
+    pair: Object<Pair>, 
+    asset0: FungibleAsset, 
+    asset1: FungibleAsset
+  ) acquires Pair {
+    let lp = pair_data(&pair);
+    dispatchable_fungible_asset::deposit(lp.token0, asset0);
+    dispatchable_fungible_asset::deposit(lp.token1, asset1);
   }
 
   #[test_only]

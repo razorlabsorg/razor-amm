@@ -32,7 +32,7 @@ module razor_amm::router {
 
   //===================== WRAP =======================================
   /*
-    This function wraps a legacy coin value into a Fungible Asset. It is irreversable
+    This function wraps a legacy coin value into a Fungible Asset. It is irreversible
     because the function for unwrapping in `0x1::coin` module is private. This is intentional
     to push the migration from the old coin standard to the new one. Technically there are no
     benefits to staying on the old standard, so it makes sense to keep it wrapped.
@@ -67,8 +67,7 @@ module razor_amm::router {
     amountBDesired: u64,
     amountAMin: u64,
     amountBMin: u64,
-    to: address,
-  ) {
+  ): (u64, u64) {
     let tokenA_addr = object::object_address(&tokenA);
     let tokenB_addr = object::object_address(&tokenB);
     if (!factory::pair_exists(tokenA, tokenB)) {
@@ -96,10 +95,7 @@ module razor_amm::router {
       amount1Min
     );
 
-    let asset0 = primary_fungible_store::withdraw(sender, token0, amount0Optimal);
-    let asset1 = primary_fungible_store::withdraw(sender, token1, amount1Optimal);
-
-    pair::mint(sender, asset0, asset1, to);
+    (amount0Optimal, amount1Optimal)
   }
 
   public entry fun add_liquidity(
@@ -116,16 +112,26 @@ module razor_amm::router {
     ensure(deadline);
     let tokenA_object = object::address_to_object<Metadata>(tokenA);
     let tokenB_object = object::address_to_object<Metadata>(tokenB);
-    add_liquidity_internal(
+
+    let (amount0, amount1) = add_liquidity_internal(
       sender,
       tokenA_object,
       tokenB_object, 
       amountADesired, 
       amountBDesired, 
       amountAMin, 
-      amountBMin,
-      to
+      amountBMin
     );
+
+    let (token0, token1) = swap_library::sort_tokens(tokenA_object, tokenB_object);
+    let pair = pair::liquidity_pool(token0, token1);
+
+    let asset0 = primary_fungible_store::withdraw(sender, token0, amount0);
+    let asset1 = primary_fungible_store::withdraw(sender, token1, amount1);
+
+    pair::deposit_to_pool(pair, asset0, asset1);
+
+    pair::mint(sender, pair, to);
   }
 
   public entry fun add_liquidity_move(
@@ -142,23 +148,18 @@ module razor_amm::router {
     let sender_addr = signer::address_of(sender);
     let token_object = object::address_to_object<Metadata>(token);
     let move_object = option::destroy_some(coin::paired_metadata<AptosCoin>());
-    let move_addr = object::object_address(&move_object);
 
-    let (token0, token1) = swap_library::sort_tokens(token_object, move_object);
-
-    if (!factory::pair_exists(token0, token1)) {
-      // no need to sort the tokens here, it will be sorted in the factory function
-      factory::create_pair(sender, token, move_addr);
-    };
-
-    let (amount0, amount1) = swap_library::calc_optimal_coin_values(
-      token0,
-      token1,
+    let (amount0, amount1) = add_liquidity_internal(
+      sender,
+      token_object,
+      move_object,
       amount_token_desired,
       amount_move_desired,
       amount_token_min,
       amount_move_min,
     );
+
+    let (token0, token1) = swap_library::sort_tokens(token_object, move_object);
 
     let move_object_balance = primary_fungible_store::balance(sender_addr, move_object);
     if (move_object_balance < (if (token0 == move_object) { amount0 } else { amount1 })) {
@@ -178,7 +179,10 @@ module razor_amm::router {
         )
     };
 
-    pair::mint(sender, asset0, asset1, to);
+    let pair = pair::liquidity_pool(token0, token1);
+    pair::deposit_to_pool(pair, asset0, asset1);
+
+    pair::mint(sender, pair, to);
   }
 
   // We hope this will be deprecated soon
@@ -196,13 +200,9 @@ module razor_amm::router {
     let sender_addr = signer::address_of(sender);
     let token_object = object::address_to_object<Metadata>(token);
     let coin_object = option::destroy_some(coin::paired_metadata<CoinType>());
-    let coin_addr = object::object_address(&coin_object);
 
-    if (!factory::pair_exists(token_object, coin_object)) {
-      factory::create_pair(sender, token, coin_addr);
-    };
-
-    let (amount_token, amount_coin) = swap_library::calc_optimal_coin_values(
+    let (amount0, amount1) = add_liquidity_internal(
+      sender,
       token_object,
       coin_object,
       amount_token_desired,
@@ -211,16 +211,30 @@ module razor_amm::router {
       amount_coin_min,
     );
 
+    let (token0, token1) = swap_library::sort_tokens(token_object, coin_object);
+
     let coin_object_balance = primary_fungible_store::balance(sender_addr, coin_object);
-    if (coin_object_balance < amount_coin) {
-      let amount_coin_to_deposit = amount_coin - coin_object_balance;
+    if (coin_object_balance < (if (token0 == coin_object) { amount0 } else { amount1 })) {
+      let amount_coin_to_deposit = (if (token0 == coin_object) { amount0 } else { amount1 }) - coin_object_balance;
       wrap_coin<CoinType>(sender, amount_coin_to_deposit);
     };
 
-    let asset0 = primary_fungible_store::withdraw(sender, token_object, amount_token);
-    let asset1 = primary_fungible_store::withdraw(sender, coin_object, amount_coin);
+    let (asset0, asset1) = if (token0 == token_object) {
+        (
+            primary_fungible_store::withdraw(sender, token_object, amount0),
+            primary_fungible_store::withdraw(sender, coin_object, amount1)
+        )
+    } else {
+        (
+            primary_fungible_store::withdraw(sender, coin_object, amount0),
+            primary_fungible_store::withdraw(sender, token_object, amount1)
+        )
+    };
 
-    pair::mint(sender, asset0, asset1, to);
+    let pair = pair::liquidity_pool(token0, token1);
+    pair::deposit_to_pool(pair, asset0, asset1);
+
+    pair::mint(sender, pair, to);
   }
 
   //===================== REMOVE LIQUIDITY =======================================
