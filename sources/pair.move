@@ -506,8 +506,8 @@ module razor_amm::pair {
     reserve0: u64,
     reserve1: u64,
   ) {
-    let balance0_adjusted = (balance0 as u128) * 10000 - (amount0_in as u128) * (30);
-    let balance1_adjusted = (balance1 as u128) * 10000 - (amount1_in as u128) * (30);
+    let balance0_adjusted = (balance0 as u128) * 10000 - (amount0_in as u128) * (25);
+    let balance1_adjusted = (balance1 as u128) * 10000 - (amount1_in as u128) * (25);
     let balance01_old_not_scaled = (reserve0 as u128) * (reserve1 as u128);
     let scale = 100000000;
     // should be: new_reserve0 * new_reserve1 > old_reserve0 * old_reserve_y

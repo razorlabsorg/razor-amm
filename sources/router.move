@@ -147,17 +147,29 @@ module razor_amm::router {
     let (token0, token1) = swap_library::sort_tokens(token_object, move_object);
 
     if (!factory::pair_exists(token0, token1)) {
-      // no need to sort the tokens here, it will be sorted in the factory function
-      factory::create_pair(sender, token, move_addr);
+        factory::create_pair(sender, token, move_addr);
+    };
+
+    // Calculate amounts based on token order
+    let (amount0_desired, amount1_desired) = if (token0 == token_object) {
+        (amount_token_desired, amount_move_desired)
+    } else {
+        (amount_move_desired, amount_token_desired)
+    };
+    
+    let (amount0_min, amount1_min) = if (token0 == token_object) {
+        (amount_token_min, amount_move_min)
+    } else {
+        (amount_move_min, amount_token_min)
     };
 
     let (amount0, amount1) = swap_library::calc_optimal_coin_values(
-      token0,
-      token1,
-      amount_token_desired,
-      amount_move_desired,
-      amount_token_min,
-      amount_move_min,
+        token0,
+        token1,
+        amount0_desired,
+        amount1_desired,
+        amount0_min,
+        amount1_min,
     );
 
     let move_object_balance = primary_fungible_store::balance(sender_addr, move_object);
@@ -198,27 +210,51 @@ module razor_amm::router {
     let coin_object = option::destroy_some(coin::paired_metadata<CoinType>());
     let coin_addr = object::object_address(&coin_object);
 
-    if (!factory::pair_exists(token_object, coin_object)) {
-      factory::create_pair(sender, token, coin_addr);
+    let (token0, token1) = swap_library::sort_tokens(token_object, coin_object);
+
+    if (!factory::pair_exists(token0, token1)) {
+        factory::create_pair(sender, token, coin_addr);
     };
 
-    let (amount_token, amount_coin) = swap_library::calc_optimal_coin_values(
-      token_object,
-      coin_object,
-      amount_token_desired,
-      amount_coin_desired,
-      amount_token_min,
-      amount_coin_min,
+    // Calculate amounts based on token order
+    let (amount0_desired, amount1_desired) = if (token0 == token_object) {
+        (amount_token_desired, amount_coin_desired)
+    } else {
+        (amount_coin_desired, amount_token_desired)
+    };
+    
+    let (amount0_min, amount1_min) = if (token0 == token_object) {
+        (amount_token_min, amount_coin_min)
+    } else {
+        (amount_coin_min, amount_token_min)
+    };
+
+    let (amount0, amount1) = swap_library::calc_optimal_coin_values(
+        token0,
+        token1,
+        amount0_desired,
+        amount1_desired,
+        amount0_min,
+        amount1_min,
     );
 
     let coin_object_balance = primary_fungible_store::balance(sender_addr, coin_object);
-    if (coin_object_balance < amount_coin) {
-      let amount_coin_to_deposit = amount_coin - coin_object_balance;
-      wrap_coin<CoinType>(sender, amount_coin_to_deposit);
+    if (coin_object_balance < (if (token0 == coin_object) { amount0 } else { amount1 })) {
+        let amount_coin_to_deposit = (if (token0 == coin_object) { amount0 } else { amount1 }) - coin_object_balance;
+        wrap_coin<CoinType>(sender, amount_coin_to_deposit);
     };
 
-    let asset0 = primary_fungible_store::withdraw(sender, token_object, amount_token);
-    let asset1 = primary_fungible_store::withdraw(sender, coin_object, amount_coin);
+    let (asset0, asset1) = if (token0 == token_object) {
+        (
+            primary_fungible_store::withdraw(sender, token_object, amount0),
+            primary_fungible_store::withdraw(sender, coin_object, amount1)
+        )
+    } else {
+        (
+            primary_fungible_store::withdraw(sender, coin_object, amount0),
+            primary_fungible_store::withdraw(sender, token_object, amount1)
+        )
+    };
 
     pair::mint(sender, asset0, asset1, to);
   }
@@ -341,10 +377,24 @@ module razor_amm::router {
     deadline: u64
   ) {
     ensure(deadline);
-    let i = 0;
     let length = vector::length(&path);
     let current_amount_in = amount_in;
 
+    // First swap (token_in to first token)
+    let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, 0));
+    let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, 1));
+    let in = primary_fungible_store::withdraw(sender, from_token, current_amount_in);
+    let out = swap(sender, in, to_token, to);
+    current_amount_in = fungible_asset::amount(&out);
+    
+    // If this is the only swap, check the output amount
+    if (length == 2) {
+      assert!(current_amount_in >= amount_out_min, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
+    };
+
+    primary_fungible_store::deposit(to, out);
+
+    let i = 1;
     while (i < length - 1) {
       let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, i));
       let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i + 1));
@@ -434,6 +484,12 @@ module razor_amm::router {
     let in = primary_fungible_store::withdraw(sender, move_object, current_amount_in);
     let out = swap(sender, in, to_token, to);
     current_amount_in = fungible_asset::amount(&out);
+    
+    // If this is the only swap, check the output amount
+    if (length == 2) {
+      assert!(current_amount_in >= amount_out_min, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
+    };
+
     primary_fungible_store::deposit(to, out);
 
     // Handle remaining swaps if any

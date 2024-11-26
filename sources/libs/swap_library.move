@@ -116,11 +116,11 @@ module razor_amm::swap_library {
     assert!(reserve_in > 0 && reserve_out > 0, ERROR_INSUFFICIENT_LIQUIDITY);
     
     // Add check for maximum input to prevent overflow
-    assert!(amount_in <= MAX_U64 / 997, ERROR_OVERFLOW); // Need to define MAX_U64
+    assert!(amount_in <= MAX_U64 / 9975, ERROR_OVERFLOW); // Need to define MAX_U64
     
-    let amount_in_with_fee = (amount_in as u128) * 997u128;
+    let amount_in_with_fee = (amount_in as u128) * 9975u128;
     let numerator = amount_in_with_fee * (reserve_out as u128);
-    let denominator = (reserve_in as u128) * 1000 + amount_in_with_fee;
+    let denominator = (reserve_in as u128) * 10000 + amount_in_with_fee;
     let amount_out = numerator / denominator;
     (amount_out as u64)
   }
@@ -134,8 +134,8 @@ module razor_amm::swap_library {
   ): u64 {
     assert!(amount_out > 0, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
     assert!(reserve_in > 0 && reserve_out > 0, ERROR_INSUFFICIENT_LIQUIDITY);
-    let numerator = (reserve_in as u128) * (amount_out as u128) * 1000;
-    let denominator = ((reserve_out - amount_out) as u128) * ((997) as u128);
+    let numerator = (reserve_in as u128) * (amount_out as u128) * 10000;
+    let denominator = ((reserve_out - amount_out) as u128) * ((9975) as u128);
     let amount_in = numerator / denominator + 1;
     (amount_in as u64)
   }
