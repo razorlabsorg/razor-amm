@@ -239,22 +239,6 @@ module razor_amm::router {
 
   //===================== REMOVE LIQUIDITY =======================================
 
-  inline fun remove_liquidity_inline(
-    sender: &signer,
-    tokenA: Object<Metadata>,
-    tokenB: Object<Metadata>,
-    liquidity: u64,
-    amountAMin: u64,
-    amountBMin: u64,
-  ): (FungibleAsset, FungibleAsset) {
-    let pair = pair::liquidity_pool(tokenA, tokenB);
-    let (redeemedA, redeemedB) = pair::burn(sender, pair, liquidity);
-    let amountA = fungible_asset::amount(&redeemedA);
-    let amountB = fungible_asset::amount(&redeemedB);
-    assert!(amountA >= amountAMin && amountB >= amountBMin, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
-    (redeemedA, redeemedB)
-  }
-
   inline fun remove_liquidity_internal(
     sender: &signer,
     tokenA: Object<Metadata>,
@@ -262,8 +246,18 @@ module razor_amm::router {
     liquidity: u64,
     amountAMin: u64,
     amountBMin: u64,
-  ): (FungibleAsset, FungibleAsset) {
-    remove_liquidity_inline(sender, tokenA, tokenB, liquidity, amountAMin, amountBMin)
+    to: address,
+  ) {
+    let pair = pair::liquidity_pool(tokenA, tokenB);
+    let (amount0, amount1) = pair::burn(sender, pair, liquidity, to);
+    let (token0, _) = swap_library::sort_tokens(tokenA, tokenB);
+    let (amountA, amountB) = if (tokenA== token0) {
+      (amount0, amount1)
+    } else {
+      (amount1, amount0)
+    };
+    assert!(amountA >= amountAMin, ERROR_INSUFFICIENT_INPUT_AMOUNT);
+    assert!(amountB >= amountBMin, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
   }
 
   public entry fun remove_liquidity(
@@ -279,17 +273,15 @@ module razor_amm::router {
     ensure(deadline);
     let tokenA_object = object::address_to_object<Metadata>(tokenA);
     let tokenB_object = object::address_to_object<Metadata>(tokenB);
-    let (amountA, amountB) = remove_liquidity_internal(
+    remove_liquidity_internal(
       sender, 
-      tokenA_object,
+      tokenA_object, 
       tokenB_object, 
       liquidity, 
       amountAMin, 
-      amountBMin
+      amountBMin, 
+      to
     );
-
-    primary_fungible_store::deposit(to, amountA);
-    primary_fungible_store::deposit(to, amountB);
   }
 
   public entry fun remove_liquidity_move(
@@ -306,17 +298,15 @@ module razor_amm::router {
     let token_object = object::address_to_object<Metadata>(token);
     let move_object = option::destroy_some(coin::paired_metadata<AptosCoin>());
 
-    let (amount_token, amount_move) = remove_liquidity_internal(
+    remove_liquidity_internal(
       sender, 
       token_object,
       move_object, 
       liquidity, 
       amount_token_min, 
-      amount_move_min
+      amount_move_min,
+      to
     );
-
-    primary_fungible_store::deposit(to, amount_token);
-    primary_fungible_store::deposit(to, amount_move);
   }
 
   //===================== SWAP ==========================================

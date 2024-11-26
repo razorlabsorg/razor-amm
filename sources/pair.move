@@ -340,7 +340,7 @@ module razor_amm::pair {
     let fee_on = mint_fee(pair, reserve0, reserve1);
 
     let lp = pair_data_mut(&pair);
-    
+
     let total_supply = lp_token_supply(pair);
     let mint_ref = &lp.lp_token_refs.mint_ref;
 
@@ -386,13 +386,16 @@ module razor_amm::pair {
     sender: &signer,
     pair: Object<Pair>,
     amount: u64,
-  ): (FungibleAsset, FungibleAsset) acquires Pair {
+    to: address,
+  ): (u64, u64) acquires Pair {
     assert_locked(pair);
     controller::assert_unpaused();
-    assert!(amount > 0, ERROR_ZERO_AMOUNT);
     let sender_addr = signer::address_of(sender);
     let store = ensure_account_token_store(sender_addr, pair);
+    
     let (reserve0, reserve1, _) = get_reserves(pair);
+    let balance0 = balance0(pair);
+    let balance1 = balance1(pair);
 
     // feeOn
     let fee_on = mint_fee(pair, reserve0, reserve1);
@@ -401,45 +404,41 @@ module razor_amm::pair {
     let lp = pair_data_mut(&pair);
     let store0 = lp.token0;
     let store1 = lp.token1;
-    let reserve0 = fungible_asset::balance(store0);
-    let reserve1 = fungible_asset::balance(store1);
-
+    
     let total_supply = lp_token_supply(pair);
-    let amount0 = ((amount as u128) * (reserve0 as u128) / total_supply as u64);
-    let amount1 = ((amount as u128) * (reserve1 as u128) / total_supply as u64);
+    let amount0 = ((amount as u128) * (balance0 as u128) / total_supply as u64);
+    let amount1 = ((amount as u128) * (balance1 as u128) / total_supply as u64);
     assert!(amount0 > 0 && amount1 > 0, ERROR_INSUFFICIENT_LIQUIDITY_BURN);
+
+    fungible_asset::burn_from(&lp.lp_token_refs.burn_ref, store, amount);
 
     let swap_signer = &controller::get_signer();
 
     let redeemed0 = dispatchable_fungible_asset::withdraw(swap_signer, store0, amount0);
     let redeemed1 = dispatchable_fungible_asset::withdraw(swap_signer, store1, amount1);
+    primary_fungible_store::deposit(to, redeemed0);
+    primary_fungible_store::deposit(to, redeemed1);
+    balance0 = fungible_asset::balance(store0); 
+    balance1 = fungible_asset::balance(store1);
     
-    let balance0 = fungible_asset::balance(store0); 
-    let balance1 = fungible_asset::balance(store1);
-    
-    fungible_asset::burn_from(&lp.lp_token_refs.burn_ref, store, amount);
-
     // update interval
     update(lp, balance0, balance1, reserve0, reserve1);
     // feeOn
-    if (fee_on) lp.k_last = (balance0 as u128) * (balance1 as u128);
+    if (fee_on) lp.k_last = (reserve0 as u128) * (reserve1 as u128);
 
-    let token0 = fungible_asset::metadata_from_asset(&redeemed0);
-    let token1 = fungible_asset::metadata_from_asset(&redeemed1);
+    let token0 = fungible_asset::store_metadata(store0);
+    let token1 = fungible_asset::store_metadata(store1);
+    let pair_address = liquidity_pool_address(token0, token1);
 
     event::emit(BurnEvent {
-      pair: liquidity_pool_address(token0, token1),
+      pair: pair_address,
       sender: sender_addr,
       amount0: amount0,
       amount1: amount1,
       lp_amount: amount,
     });
     
-    if (is_sorted(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1))) {
-      (redeemed0, redeemed1)
-    } else {
-      (redeemed1, redeemed0)
-    }
+    (amount0, amount1)
   }
 
   public(friend) fun swap(
