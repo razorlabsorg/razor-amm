@@ -97,12 +97,7 @@ target/
 gas-profiling
 
 .aptos
-
-liquidity_pool.mo
-router.mo
-evm
 *.mo
-pancakemove
 aptos-framework
 aptos-stdlib
 aptos-amm
@@ -110,7 +105,4 @@ aptos-token
 aptos-token-objects
 move-examples
 move-stdlib
-snippets
-yuzu
-kswap
 projects

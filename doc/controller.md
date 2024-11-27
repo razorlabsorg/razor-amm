@@ -49,7 +49,7 @@ This is a singleton object stored at the @razor_amm address.
 
 
 
-<pre><code><b>const</b> <a href="controller.md#0x4b1bf00e6b8dc4a7bc00f9dc02e5da424236afad275c8833b48c54b0496fd283_controller_ADMIN">ADMIN</a>: <b>address</b> = 0x4b1bf00e6b8dc4a7bc00f9dc02e5da424236afad275c8833b48c54b0496fd283;
+<pre><code><b>const</b> <a href="controller.md#0x4b1bf00e6b8dc4a7bc00f9dc02e5da424236afad275c8833b48c54b0496fd283_controller_ADMIN">ADMIN</a>: <b>address</b> = 0x2b9e64c5fad8a9a881a6657b53af04ed1ad6159734a06842e29ef98b1a5f2181;
 </code></pre>
 
 
@@ -118,7 +118,7 @@ Contract is needs to be paused first
 
 
 
-<pre><code><b>const</b> <a href="controller.md#0x4b1bf00e6b8dc4a7bc00f9dc02e5da424236afad275c8833b48c54b0496fd283_controller_FEE_ADMIN">FEE_ADMIN</a>: <b>address</b> = 0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839;
+<pre><code><b>const</b> <a href="controller.md#0x4b1bf00e6b8dc4a7bc00f9dc02e5da424236afad275c8833b48c54b0496fd283_controller_FEE_ADMIN">FEE_ADMIN</a>: <b>address</b> = 0x141f0efdebb2d94806d1ce547e9d6ebd92e8e7163d75a03359e705392b407877;
 </code></pre>
 
 

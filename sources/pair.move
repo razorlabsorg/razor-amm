@@ -510,8 +510,6 @@ module razor_amm::pair {
     let balance1_adjusted = (balance1 as u128) * 10000 - (amount1_in as u128) * (25);
     let balance01_old_not_scaled = (reserve0 as u128) * (reserve1 as u128);
     let scale = 100000000;
-    // should be: new_reserve0 * new_reserve1 > old_reserve0 * old_reserve_y
-    // gas saving
     if (
       math::is_overflow_mul(balance0_adjusted, balance1_adjusted)
       || math::is_overflow_mul(balance01_old_not_scaled, scale)
