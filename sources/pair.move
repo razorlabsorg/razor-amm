@@ -482,6 +482,7 @@ module razor_amm::pair {
     update(lp, balance0, balance1, reserve0, reserve1);
 
     let pair_address = liquidity_pool_address(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1));
+    
     event::emit(SwapEvent {
       sender: signer::address_of(sender),
       amount0_in,
@@ -491,11 +492,8 @@ module razor_amm::pair {
       pair_address: pair_address,
       to,
     });
-    if (is_sorted(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1))) {
-      (token0_out, token1_out)
-    } else {
-      (token1_out, token0_out)
-    }
+
+    (token0_out, token1_out)
   }
 
   inline fun assert_k_increase(
