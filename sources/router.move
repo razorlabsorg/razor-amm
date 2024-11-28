@@ -1,3 +1,12 @@
+/// Router module for the Razor AMM DEX
+/// Handles all swap operations and liquidity management
+/// 
+/// # Features
+/// - Token swaps (exact input/output)
+/// - Liquidity addition/removal
+/// - Native MOVE token integration
+/// - Legacy coin wrapping support
+/// 
 module razor_amm::router {
   use std::option;
   use std::signer;
@@ -22,17 +31,75 @@ module razor_amm::router {
   const ERROR_INSUFFICIENT_OUTPUT_AMOUNT: u64 = 3;
   /// Invalid Swap Path
   const ERROR_INVALID_PATH: u64 = 4;
-
+  /// Insufficient Balance
+  const ERROR_INSUFFICIENT_BALANCE: u64 = 5;
+  /// Invalid Token Order
+  const ERROR_INVALID_TOKEN_ORDER: u64 = 6;
+  /// Invalid Amount (zero or overflow)
+  const ERROR_INVALID_AMOUNT: u64 = 7;
+  /// Invalid Path Length
+  const ERROR_INVALID_PATH_LENGTH: u64 = 8;
+  /// Identical Tokens
+  const ERROR_IDENTICAL_TOKENS: u64 = 9;
 
   const WMOVE: address = @0xa;
+  const MIN_PATH_LENGTH: u64 = 2;
 
+  /// Ensures the transaction deadline from frontend hasn't expired
   inline fun ensure(deadline: u64) {
     assert!(deadline >= timestamp::now_seconds(), ERROR_EXPIRED);
   }
 
+  /// Validates that a path starts with an expected token address
+  inline fun validate_path_start(path: &vector<address>, expected: address) {
+    assert!(vector::length(path) >= MIN_PATH_LENGTH, ERROR_INVALID_PATH_LENGTH);
+    assert!(*vector::borrow(path, 0) == expected, ERROR_INVALID_PATH);
+  }
+
+  /// Validates that a path ends with an expected token address
+  inline fun validate_path_end(path: &vector<address>, expected: address) {
+    let len = vector::length(path);
+    assert!(len >= MIN_PATH_LENGTH, ERROR_INVALID_PATH_LENGTH);
+    assert!(*vector::borrow(path, len - 1) == expected, ERROR_INVALID_PATH);
+  }
+
+  /// Validates the basic requirements for a swap path
+  inline fun validate_swap_path(path: &vector<address>) {
+    assert!(vector::length(path) >= MIN_PATH_LENGTH, ERROR_INVALID_PATH_LENGTH);
+  }
+
+  /// Ensures amount is non-zero
+  inline fun validate_amount(amount: u64) {
+    assert!(amount > 0, ERROR_INVALID_AMOUNT);
+  }
+
+  /// Ensures two tokens are not the same
+  inline fun validate_token_pair(tokenA: address, tokenB: address) {
+    assert!(tokenA != tokenB, ERROR_IDENTICAL_TOKENS);
+  }
+
+  /// Ensures sufficient balance exists or wraps more tokens
+  inline fun ensure_sufficient_balance<CoinType>(
+    sender: &signer,
+    token: Object<Metadata>,
+    required_amount: u64,
+    is_move: bool
+  ) {
+    let sender_addr = signer::address_of(sender);
+    let balance = primary_fungible_store::balance(sender_addr, token);
+    if (balance < required_amount) {
+      let amount_to_deposit = required_amount - balance;
+      if (is_move) {
+        wrap_move(sender, amount_to_deposit);
+      } else {
+        wrap_coin<CoinType>(sender, amount_to_deposit);
+      };
+    };
+  }
+
   //===================== WRAP =======================================
   /*
-    This function wraps a legacy coin value into a Fungible Asset. It is irreversable
+    This function wraps a legacy coin value into a Fungible Asset. It is irreversible
     because the function for unwrapping in `0x1::coin` module is private. This is intentional
     to push the migration from the old coin standard to the new one. Technically there are no
     benefits to staying on the old standard, so it makes sense to keep it wrapped.
@@ -113,7 +180,11 @@ module razor_amm::router {
     to: address,
     deadline: u64,
   ) {
+    validate_token_pair(tokenA, tokenB);
+    validate_amount(amountADesired);
+    validate_amount(amountBDesired);
     ensure(deadline);
+
     let tokenA_object = object::address_to_object<Metadata>(tokenA);
     let tokenB_object = object::address_to_object<Metadata>(tokenB);
     add_liquidity_internal(
@@ -138,7 +209,11 @@ module razor_amm::router {
     to: address,
     deadline: u64,
   ) {
+    validate_token_pair(token, WMOVE);
+    validate_amount(amount_token_desired);
+    validate_amount(amount_move_desired);
     ensure(deadline);
+    
     let sender_addr = signer::address_of(sender);
     let token_object = object::address_to_object<Metadata>(token);
     let move_object = option::destroy_some(coin::paired_metadata<AptosCoin>());
@@ -344,7 +419,14 @@ module razor_amm::router {
 
     let amount_in = fungible_asset::amount(&token_in);
 
-    let (reserve_in, reserve_out, _) = pair::get_reserves(pair);
+    let (reserve0, reserve1, _) = pair::get_reserves(pair);
+    // Use the correct reserves based on whether from_token is token0
+    let (reserve_in, reserve_out) = if (from_token == token0) {
+      (reserve0, reserve1)
+    } else {
+      (reserve1, reserve0)
+    };
+
     let amount_out = swap_library::get_amount_out(amount_in, reserve_in, reserve_out);
     let (zero, coins_out);
     if (swap_library::is_sorted(from_token, to_token)) {
@@ -752,17 +834,4 @@ module razor_amm::router {
       i = i + 1;
     };
   }
-
-  /* inline fun path_to_object_path(path: vector<address>): vector<Object<Metadata>> {
-    let object_path = vector::empty<Object<Metadata>>();
-    let i = 0;
-    let len = vector::length(&path);
-    while (i < len) {
-        let token_address = *vector::borrow(&path, i);
-        let token_object = object::address_to_object<Metadata>(token_address);
-        vector::push_back(&mut object_path, token_object);
-        i = i + 1;
-    };
-    object_path
-  } */
 }
