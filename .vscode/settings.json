@@ -3,6 +3,8 @@
     "dispatchable",
     "factuals",
     "mvcov",
+    "rebalance",
+    "Rebalancing",
     "stdlib",
     "WMOVE"
   ]

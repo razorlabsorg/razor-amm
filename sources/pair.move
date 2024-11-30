@@ -157,6 +157,18 @@ module razor_amm::pair {
   }
 
   #[view]
+  public fun token0(pair: Object<Pair>): Object<Metadata> acquires Pair {
+    let pair_data = pair_data(&pair);
+    fungible_asset::store_metadata(pair_data.token0)
+  }
+
+  #[view]
+  public fun token1(pair: Object<Pair>): Object<Metadata> acquires Pair {
+    let pair_data = pair_data(&pair);
+    fungible_asset::store_metadata(pair_data.token1)
+  }
+
+  #[view]
   public fun balance_of(pair: Object<Pair>, token: Object<Metadata>): u64 acquires Pair {
     let pair_data = pair_data(&pair);
     if (object::object_address(&token) == object::object_address(&pair_data.token0)) {

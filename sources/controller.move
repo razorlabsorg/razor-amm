@@ -6,6 +6,7 @@ module razor_amm::controller {
   friend razor_amm::factory;
   friend razor_amm::pair;
   friend razor_amm::oracle;
+  friend razor_amm::zap;
 
   const FEE_ADMIN: address = @fee_admin;
   const ADMIN: address = @admin;
