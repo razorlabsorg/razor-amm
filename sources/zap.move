@@ -1,4 +1,3 @@
-
 module razor_amm::zap {
   use std::option;
   use std::vector;
@@ -109,6 +108,7 @@ module razor_amm::zap {
     liquidity
   }
 
+  // Calculate the swap amount to get the price at 50/50 split
   fun calculate_amount_to_swap(
     token0_amount_in: u64,
     reserve0: u64,
@@ -130,6 +130,7 @@ module razor_amm::zap {
     amount_to_swap
   }
 
+  // Calculate the swap amount to get the price at 50/50 split
   fun calculate_amount_to_swap_for_rebalancing(
     token0_amount_in: u64,
     token1_amount_in: u64,
@@ -322,31 +323,56 @@ module razor_amm::zap {
       timestamp::now_seconds() + 100
     );
 
+    let amount0_in;
+    let amount1_in;
+
     if (is_token0_sold) {
+      amount0_in = (token0_amount_in - *vector::borrow(&swapped_amounts, 0));
+      amount1_in = (token1_amount_in + *vector::borrow(&swapped_amounts, 1));
+
       router::add_liquidity(
         sender,
         *vector::borrow(&address_path, 0),
         *vector::borrow(&address_path, 1),
-        (token0_amount_in - *vector::borrow(&swapped_amounts, 0)),
-        (token1_amount_in - *vector::borrow(&swapped_amounts, 1)),
+        amount0_in,
+        amount1_in,
         1,
         1,
         signer::address_of(sender),
         timestamp::now_seconds() + 100
       )
     } else {
+      amount0_in = (token1_amount_in - *vector::borrow(&swapped_amounts, 0));
+      amount1_in = (token0_amount_in + *vector::borrow(&swapped_amounts, 1));
+
       router::add_liquidity(
         sender,
         *vector::borrow(&address_path, 0),
         *vector::borrow(&address_path, 1),
-        (token1_amount_in - *vector::borrow(&swapped_amounts, 0)),
-        (token0_amount_in - *vector::borrow(&swapped_amounts, 1)),
+        amount0_in,
+        amount1_in,
         1,
         1,
         signer::address_of(sender),
         timestamp::now_seconds() + 100
       )
     };
+
+    let liquidity_minted = calculate_liquidity(
+      lp_token, 
+      amount0_in,
+      amount1_in,
+    );
+
+    event::emit(ZapInRebalancingEvent {
+      token0_to_zap,
+      token1_to_zap,
+      lp_token,
+      token0_amount_in,
+      token1_amount_in,
+      lp_token_amount_received: liquidity_minted,
+      user: signer::address_of(sender),
+    });
   }
 
   fun zap_out_internal(
@@ -390,6 +416,9 @@ module razor_amm::zap {
       swap_amount_in = primary_fungible_store::balance(sender_address, token0_object);
     };
 
+    let receipt_token_object = object::address_to_object<Metadata>(token_to_receive);
+    let balance_before = primary_fungible_store::balance(sender_address, receipt_token_object);
+
     // swap tokens
     router::swap_exact_tokens_for_tokens(
       sender,
@@ -399,6 +428,17 @@ module razor_amm::zap {
       sender_address,
       timestamp::now_seconds() + 100
     );
+
+    let balance_after = primary_fungible_store::balance(sender_address, receipt_token_object);
+    let token_amount_received = balance_after - balance_before;
+    
+    event::emit(ZapOutEvent {
+      lp_token,
+      token_to_receive,
+      lp_token_amount: liquidity,
+      token_amount_received,
+      user: signer::address_of(sender),
+    });
   }
 
   /*
@@ -491,7 +531,7 @@ module razor_amm::zap {
     lp_token: address,
     lp_token_amount: u64,
     token_amount_out_min: u64,
-  ) acquires Zap {
+  ) {
     zap_out_internal(sender, lp_token, lp_token_amount, WMOVE, token_amount_out_min);
   }
 
@@ -501,7 +541,7 @@ module razor_amm::zap {
     token_to_receive: address,
     lp_token_amount: u64,
     token_amount_out_min: u64,
-  ) acquires Zap {
+  ) {
     zap_out_internal(sender, lp_token, lp_token_amount, token_to_receive, token_amount_out_min);
   }
 
@@ -516,6 +556,148 @@ module razor_amm::zap {
     event::emit(NewMaxZapReserveRatioEvent {
       max_zap_reserve_ratio,
     });
+  }
+
+  #[view]
+  public fun estimate_zap_in_swap(
+    token_to_zap: address,
+    token_amount_in: u64,
+    lp_token: address
+  ): (u64, u64, address) {
+    let lp_token_object = object::address_to_object<Pair>(lp_token);
+    let token0 = pair::token0(lp_token_object);
+    let token1 = pair::token1(lp_token_object);
+
+    let token0_address = object::object_address(&token0);
+    let token1_address = object::object_address(&token1);
+
+    assert!(token_to_zap == token0_address || token_to_zap == token1_address, ERROR_INVALID_TOKEN);
+
+    let (reserve0, reserve1, _) = pair::get_reserves(lp_token_object);
+    
+    let swap_amount_in;
+    let swap_amount_out;
+    let swap_token_out;
+    if (token_to_zap == token0_address) {
+      swap_token_out = token1_address;
+      swap_amount_in = calculate_amount_to_swap(token_amount_in, reserve0, reserve1);
+      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve0, reserve1);
+    } else {
+      swap_token_out = token0_address;
+      swap_amount_in = calculate_amount_to_swap(token_amount_in, reserve1, reserve0);
+      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve1, reserve0);
+    };
+
+    (swap_amount_in, swap_amount_out, swap_token_out)
+  }
+
+  #[view]
+  public fun estimate_zap_in_rebalancing_swap(
+    token0_to_zap: address,
+    token1_to_zap: address,
+    token0_amount_in: u64,
+    token1_amount_in: u64,
+    lp_token: address,
+  ): (u64, u64, bool) {
+    let lp_token_object = object::address_to_object<Pair>(lp_token);
+    let token0 = pair::token0(lp_token_object);
+    let token1 = pair::token1(lp_token_object);
+
+    let token0_address = object::object_address(&token0);
+    let token1_address = object::object_address(&token1);
+
+    assert!(token0_to_zap == token0_address || token0_to_zap == token1_address, ERROR_INVALID_TOKEN);
+    assert!(token1_to_zap == token0_address || token1_to_zap == token1_address, ERROR_INVALID_TOKEN);
+    assert!(token0_to_zap != token1_to_zap, ERROR_SAME_TOKEN);
+
+    let (reserve0, reserve1, _) = pair::get_reserves(lp_token_object);
+
+    let swap_amount_in;
+    let swap_amount_out;
+    let sell_token0;
+    
+
+    if (token0_to_zap == token0_address) {
+      // Determine which token needs to be sold based on reserve ratios
+      sell_token0 = if (token0_amount_in * reserve1 > token1_amount_in * reserve0) {
+        true
+      } else {
+        false
+      };
+      // If token0_to_zap matches pair's token0
+      swap_amount_in = calculate_amount_to_swap_for_rebalancing(
+        token0_amount_in,
+        token1_amount_in,
+        reserve0,
+        reserve1,
+        sell_token0
+      );
+
+      swap_amount_out = if (sell_token0) {
+        swap_library::get_amount_out(swap_amount_in, reserve0, reserve1)
+      } else {
+        swap_library::get_amount_out(swap_amount_in, reserve1, reserve0)
+      };
+    } else {
+      // Determine which token needs to be sold based on reserve ratios
+      sell_token0 = if (token0_amount_in * reserve0 > token1_amount_in * reserve1) {
+        true
+      } else {
+        false
+      };
+
+      // If token0_to_zap matches pair's token1
+      swap_amount_in = calculate_amount_to_swap_for_rebalancing(
+        token0_amount_in,
+        token1_amount_in,
+        reserve1,
+        reserve0,
+        sell_token0
+      );
+
+      swap_amount_out = if (sell_token0) {
+        swap_library::get_amount_out(swap_amount_in, reserve1, reserve0)
+      } else {
+        swap_library::get_amount_out(swap_amount_in, reserve0, reserve1)
+      };
+    };
+
+    (swap_amount_in, swap_amount_out, sell_token0)
+  }
+
+  #[view]
+  public fun estimate_zap_out_swap(
+    lp_token: address,
+    lp_token_amount: u64,
+    token_to_receive: address,
+  ): (u64, u64, address) {
+    let lp_token_object = object::address_to_object<Pair>(lp_token);
+    let token0 = pair::token0(lp_token_object);
+    let token1 = pair::token1(lp_token_object);
+
+    let token0_address = object::object_address(&token0);
+    let token1_address = object::object_address(&token1);
+
+    assert!(token_to_receive == token0_address || token_to_receive == token1_address, ERROR_INVALID_TOKEN);
+
+    let (reserve0, reserve1, _) = pair::get_reserves(lp_token_object);
+    let swap_amount_in;
+    let swap_amount_out;
+    let swap_token_out;
+
+    if (token1_address == token_to_receive) {
+      let token_amount_in = ((lp_token_amount * reserve0) as u128) / pair::lp_token_supply(lp_token_object);
+      swap_amount_in = calculate_amount_to_swap((token_amount_in as u64), reserve0, reserve1);
+      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve0, reserve1);
+      swap_token_out = token0_address
+    } else {
+      let token_amount_in = ((lp_token_amount * reserve1) as u128) / pair::lp_token_supply(lp_token_object);
+      swap_amount_in = calculate_amount_to_swap((token_amount_in as u64), reserve1, reserve0);
+      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve1, reserve0);
+      swap_token_out = token1_address
+    };
+
+    (swap_amount_in, swap_amount_out, swap_token_out)
   }
 
   inline fun only_admin(sender: &signer) {
