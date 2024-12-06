@@ -9,7 +9,7 @@ ARTIFACTS_LEVEL ?= all
 DEFAULT_FUND_AMOUNT ?= 100000000
 DEFAULT_FUNDER_PRIVATE_KEY ?= 0x0
 DEV_ACCOUNT ?= 0x2b9e64c5fad8a9a881a6657b53af04ed1ad6159734a06842e29ef98b1a5f2181
-AMM_ADDRESS ?= 0xe48f7bbd403acf5f35ccc8cac01438226210887efdfee3747b7e996be1d062a6
+AMM_ADDRESS ?= 0x6cea397a12191439cafec2b4890325cc0db63030370a6536796dbb1497a1b493
 
 # ============================= CLEAN ============================= #
 clean:
@@ -43,6 +43,7 @@ upgrade:
 	aptos move upgrade-object \
 	--skip-fetch-latest-git-deps \
 	--address-name razor_amm \
+	--included-artifacts none \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--object-address $(AMM_ADDRESS)
 
