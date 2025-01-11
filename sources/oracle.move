@@ -285,7 +285,7 @@ module razor_amm::oracle {
     let height_diff = block::get_current_block_height() - block_info.height;
     assert!(height_diff > 0, ERROR_HEIGHT_DIFF_ZERO);
     let time_diff = timestamp::now_seconds() - block_info.timestamp;
-    (time_diff / height_diff) as u64
+    ((time_diff / height_diff) as u64)
   }
 
   public entry fun add_router_token(sender: &signer, token: Object<Metadata>) acquires Oracle {
