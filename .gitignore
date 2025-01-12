@@ -89,7 +89,6 @@ target/
 *.pdb
 
 .idea
-**/build
 
 # Move coverage testing
 *.mvcov
