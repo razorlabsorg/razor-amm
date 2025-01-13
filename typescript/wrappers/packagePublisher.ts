@@ -135,7 +135,7 @@ export class PackagePublisher {
     publish: boolean,
   ): Promise<CommittedTransactionResponse> {
     if (publish) {
-      return this.largePackagesClient.stageCodeChunkAndPublishToAccount(
+      return this.largePackagesClient.stageCodeChunkAndPublishToObject(
         chunkedPackageMetadata,
         modulesIndices,
         chunkedModules,

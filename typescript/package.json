@@ -10,6 +10,7 @@
     "lint:fix": "eslint --fix --ext=.js,.jsx,.ts .",
     "fmt": "npm run prettier:fix && npm run lint:fix",
     "fmt:check": "npm run prettier && npm run lint",
+    "publish-amm": "ts-node scripts/publishLargePackage.ts --module=../move --profile=default",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write ."
   },
