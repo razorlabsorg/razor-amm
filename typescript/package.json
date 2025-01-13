@@ -54,6 +54,7 @@
   "dependencies": {
     "@aptos-labs/ts-sdk": "^1.33.1",
     "dotenv": "^16.4.7",
+    "toml": "^3.0.0",
     "yaml": "^2.7.0"
   }
 }
