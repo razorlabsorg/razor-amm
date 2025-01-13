@@ -18,14 +18,14 @@ clean:
 # ===================== PACKAGE AMM ===================== #
 
 compile:
-	aptos move compile \
+	cd move && aptos move compile \
 	--skip-fetch-latest-git-deps \
 	--save-metadata \
 	--included-artifacts $(ARTIFACTS_LEVEL) \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
 
 test:
-	aptos move test \
+	cd move && aptos move test \
 	--skip-fetch-latest-git-deps \
 	--ignore-compile-warnings \
 	--skip-attribute-checks \
@@ -33,14 +33,14 @@ test:
 	--coverage
 
 publish:
-	aptos move deploy-object \
+	cd move && aptos move deploy-object \
 	--skip-fetch-latest-git-deps \
 	--included-artifacts ${ARTIFACTS_LEVEL} \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--address-name razor_amm
 
 upgrade:
-	aptos move upgrade-object \
+	cd move && aptos move upgrade-object \
 	--skip-fetch-latest-git-deps \
 	--address-name razor_amm \
 	--included-artifacts none \
@@ -48,7 +48,7 @@ upgrade:
 	--object-address $(AMM_ADDRESS)
 
 docs:
-	aptos move document \
+	cd move && aptos move document \
 	--skip-fetch-latest-git-deps \
 	--skip-attribute-checks \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
