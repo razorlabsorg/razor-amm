@@ -9,7 +9,7 @@ ARTIFACTS_LEVEL ?= none
 DEFAULT_FUND_AMOUNT ?= 100000000
 DEFAULT_FUNDER_PRIVATE_KEY ?= 0x0
 DEV_ACCOUNT ?= 0x0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a
-AMM_ADDRESS ?= 0x190aae4e7b1b0bcecbe4c451179ac7e4a0a8ef4dad110f4947c59cb4d51fbca2
+AMM_ADDRESS ?= 0x13253effc048095b933b0d2ffe307913b074fb3b9f56780cc2495e18f0e6e14d
 
 # ============================= CLEAN ============================= #
 clean:
@@ -20,7 +20,6 @@ clean:
 compile:
 	aptos move compile \
 	--skip-fetch-latest-git-deps \
-	--save-metadata \
 	--move-2 \
 	--included-artifacts $(ARTIFACTS_LEVEL) \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
@@ -36,8 +35,9 @@ test:
 
 publish:
 	aptos move deploy-object \
+	--move-2 \
 	--skip-fetch-latest-git-deps \
-	--included-artifacts ${ARTIFACTS_LEVEL} \
+	--included-artifacts none \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--address-name razor_amm
 
