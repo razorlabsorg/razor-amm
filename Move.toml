@@ -8,6 +8,7 @@ upgrade_policy = "compatible"
 razor_amm = "_"
 admin = "0x0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a"
 fee_admin = "0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839"
+razor_libs = "0xd7f96eefaebffd142905a66d68ea836927b56a95cb424e945ef28cd9353a5425"
 bob = "0xb0b"
 alice = "0xa11ce"
 
@@ -16,5 +17,6 @@ alice = "0xa11ce"
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", rev="main", subdir = "aptos-move/framework/aptos-framework" }
 AptosStdlib = { git = "https://github.com/aptos-labs/aptos-core.git", rev="main", subdir = "aptos-move/framework/aptos-stdlib" }
+RazorLibs = { git = "https://github.com/razorlabsorg/razor-libs.git", rev="main" }
 
 [dev-dependencies]

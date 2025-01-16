@@ -16,8 +16,9 @@ module razor_amm::router_tests {
   use razor_amm::usdc_token;
   use razor_amm::usdt_token;
   use razor_amm::pair;
-  use razor_amm::math;
   use razor_amm::swap_library;
+
+  use razor_libs::math;
 
   const MINIMUM_LIQUIDITY: u64 = 1000;
   const MAX_U64: u64 = 18446744073709551615;

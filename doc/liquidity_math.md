@@ -14,12 +14,12 @@
 
 
 <pre><code><b>use</b> <a href="controller.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_controller">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::controller</a>;
-<b>use</b> <a href="math.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_math">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::math</a>;
 <b>use</b> <a href="pair.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_pair">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::pair</a>;
 <b>use</b> <a href="swap_library.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_swap_library">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::swap_library</a>;
 <b>use</b> <a href="">0x1::error</a>;
 <b>use</b> <a href="">0x1::math128</a>;
 <b>use</b> <a href="">0x1::object</a>;
+<b>use</b> <a href="">0xd7f96eefaebffd142905a66d68ea836927b56a95cb424e945ef28cd9353a5425::math</a>;
 </code></pre>
 
 

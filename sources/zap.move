@@ -11,10 +11,11 @@ module razor_amm::zap {
   use aptos_framework::timestamp;
   use aptos_framework::primary_fungible_store;
 
+  use razor_libs::math;
+
   use razor_amm::controller;
   use razor_amm::pair::{Self, Pair};
   use razor_amm::swap_library;
-  use razor_amm::math;
   use razor_amm::router;
 
   const MINIMUM_AMOUNT: u64 = 1000;

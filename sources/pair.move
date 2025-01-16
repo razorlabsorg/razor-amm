@@ -15,8 +15,9 @@ module razor_amm::pair {
   use aptos_std::comparator;
 
   use razor_amm::controller;
-  use razor_amm::math;
-  use razor_amm::uq64x64;
+
+  use razor_libs::math;
+  use razor_libs::uq64x64;
 
   friend razor_amm::factory;
   friend razor_amm::router;

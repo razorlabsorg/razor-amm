@@ -11,8 +11,9 @@ module razor_amm::liquidity_math {
 
   use razor_amm::controller;
   use razor_amm::swap_library;
-  use razor_amm::math;
   use razor_amm::pair::{Self, Pair};
+
+  use razor_libs::math;
 
   /// Pair Reserves is Zero
   const ERROR_ZERO_PAIR_RESERVES: u64 = 1;

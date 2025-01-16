@@ -12,11 +12,12 @@ compiled_package_info:
     bob: 0000000000000000000000000000000000000000000000000000000000000b0b
     core_resources: 000000000000000000000000000000000000000000000000000000000a550c18
     fee_admin: 703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839
-    razor_amm: 0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a
+    razor_amm: 1caf88d88fbc72a2c3b568e227b9581d3f11b736a2927446e13d3812743dbf2f
+    razor_libs: d7f96eefaebffd142905a66d68ea836927b56a95cb424e945ef28cd9353a5425
     std: "0000000000000000000000000000000000000000000000000000000000000001"
     vm: "0000000000000000000000000000000000000000000000000000000000000000"
     vm_reserved: "0000000000000000000000000000000000000000000000000000000000000000"
-  source_digest: 7BC58DC24589CC427D45DE38703AE15D6B51EA30CAD4866439828817D9391EB1
+  source_digest: F3D71D593A9E4AE8CD8B1E943F6DA6626184A8043B39E50A8F1A6379ECC84423
   build_flags:
     dev_mode: false
     test_mode: false
@@ -28,7 +29,7 @@ compiled_package_info:
     install_dir: ~
     force_recompilation: false
     additional_named_addresses:
-      razor_amm: 0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a
+      razor_amm: 1caf88d88fbc72a2c3b568e227b9581d3f11b736a2927446e13d3812743dbf2f
     architecture: ~
     fetch_deps_only: false
     skip_fetch_latest_git_deps: true
@@ -52,12 +53,14 @@ compiled_package_info:
         - test_only
         - verify_only
         - view
-      skip_attribute_checks: true
+      skip_attribute_checks: false
       compiler_version: V2_0
       language_version: V2_1
-      experiments: []
+      experiments:
+        - optimize=on
 dependencies:
   - AptosFramework
   - AptosStdlib
   - MoveStdlib
+  - RazorLibs
 bytecode_deps: []

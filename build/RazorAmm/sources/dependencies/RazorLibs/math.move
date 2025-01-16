@@ -1,7 +1,7 @@
 /*
  * A library for performing various math operations
 */
-module razor_amm::math {
+module razor_libs::math {
   /// Largest possible u128 number
   const MAX_U128: u128 = 340282366920938463463374607431768211455;
 

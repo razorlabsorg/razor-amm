@@ -5,9 +5,10 @@ module razor_amm::oracle_library {
   use aptos_framework::object::Object;
   use aptos_framework::timestamp;
 
-  use razor_amm::math;
   use razor_amm::pair::{Self, Pair};
-  use razor_amm::uq64x64;
+  
+  use razor_libs::math;
+  use razor_libs::uq64x64;
 
   // helper function that returns the current block timestamp
   #[view]
