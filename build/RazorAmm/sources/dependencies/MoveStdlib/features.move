@@ -607,18 +607,12 @@ module std::features {
         is_enabled(COLLECTION_OWNER)
     }
 
-    /// Whether the transaction context hash function update is enabled. This update introduces new APIs (public functions
-    /// and native functions) to the transaction context module: `raw_transaction_hash` and `unique_session_hash`.
-    /// `raw_transaction_hash` retrieves the hash of the raw transaction. Also, `unique_session_hash` will replace
-    /// in a later release the existing `get_transaction_hash` function which has a misleading name.
-    ///
-    /// Lifetime: transient
-    const TRANSACTION_CONTEXT_HASH_FUNCTION_UPDATE: u64 = 80;
+    const NATIVE_MEMORY_OPERATIONS: u64 = 80;
 
-    public fun get_transaction_context_hash_function_update_feature(): u64 { TRANSACTION_CONTEXT_HASH_FUNCTION_UPDATE }
+    public fun get_native_memory_operations_feature(): u64 { NATIVE_MEMORY_OPERATIONS }
 
-    public fun transaction_context_hash_function_update_enabled(): bool acquires Features {
-        is_enabled(TRANSACTION_CONTEXT_HASH_FUNCTION_UPDATE)
+    public fun is_native_memory_operations_enabled(): bool acquires Features {
+        is_enabled(NATIVE_MEMORY_OPERATIONS)
     }
 
     // ============================================================================================

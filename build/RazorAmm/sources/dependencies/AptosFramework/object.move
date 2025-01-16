@@ -662,14 +662,15 @@ module aptos_framework::object {
     /// Return true if the provided address has indirect or direct ownership of the provided object.
     public fun owns<T: key>(object: Object<T>, owner: address): bool acquires ObjectCore {
         let current_address = object_address(&object);
-        if (current_address == owner) {
-            return true
-        };
 
         assert!(
             exists<ObjectCore>(current_address),
             error::not_found(EOBJECT_DOES_NOT_EXIST),
         );
+
+        if (current_address == owner) {
+            return true
+        };
 
         let object = borrow_global<ObjectCore>(current_address);
         let current_address = object.owner;
@@ -844,7 +845,7 @@ module aptos_framework::object {
     #[test(fx = @std)]
     fun test_correct_auid() {
         let auid1 = aptos_framework::transaction_context::generate_auid_address();
-        let bytes = aptos_framework::transaction_context::unique_session_hash();
+        let bytes = aptos_framework::transaction_context::get_transaction_hash();
         std::vector::push_back(&mut bytes, 1);
         std::vector::push_back(&mut bytes, 0);
         std::vector::push_back(&mut bytes, 0);

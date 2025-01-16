@@ -1,16 +1,12 @@
 #[test_only]
 module razor_amm::router_tests {
-  use std::option;
   use std::signer;
   use std::vector;
 
   use aptos_std::math64::pow;
 
   use aptos_framework::account;
-  use aptos_framework::coin;
-  use aptos_framework::aptos_coin::{AptosCoin};
   use aptos_framework::object;
-  use aptos_framework::primary_fungible_store;
   use aptos_framework::timestamp;
 
   use razor_amm::controller_tests;
@@ -160,7 +156,6 @@ module razor_amm::router_tests {
     let razor_metadata = razor_token::metadata();
     let usdc_metadata = usdc_token::metadata();
     let razor_address = razor_token::razor_token_address();
-    let usdc_address = usdc_token::usdc_token_address();
 
     let (token0, token1) = swap_library::sort_tokens(razor_metadata, usdc_metadata);
     let token0_address = object::object_address(&token0);
@@ -403,8 +398,6 @@ module razor_amm::router_tests {
     test_coins::mint_razor(admin, signer::address_of(bob), 1000 * pow(10, 8));
     test_coins::mint_usdc(admin, signer::address_of(bob), 1000 * pow(10, 8));
 
-    let razor_metadata = razor_token::metadata();
-    let usdc_metadata = usdc_token::metadata();
     let razor_address = razor_token::razor_token_address();
     let usdc_address = usdc_token::usdc_token_address();
 

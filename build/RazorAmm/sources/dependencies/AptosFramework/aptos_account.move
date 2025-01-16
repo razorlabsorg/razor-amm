@@ -4,7 +4,7 @@ module aptos_framework::aptos_account {
     use aptos_framework::coin::{Self, Coin};
     use aptos_framework::create_signer::create_signer;
     use aptos_framework::event::{EventHandle, emit_event, emit};
-    use aptos_framework::fungible_asset::{Self, Metadata, BurnRef};
+    use aptos_framework::fungible_asset::{Self, Metadata, BurnRef, FungibleAsset};
     use aptos_framework::primary_fungible_store;
     use aptos_framework::object;
 
@@ -12,6 +12,7 @@ module aptos_framework::aptos_account {
     use std::features;
     use std::signer;
     use std::vector;
+    use aptos_framework::object::Object;
 
     friend aptos_framework::genesis;
     friend aptos_framework::resource_account;
@@ -132,6 +133,40 @@ module aptos_framework::aptos_account {
         coin::deposit<CoinType>(to, coins)
     }
 
+    /// Batch version of transfer_fungible_assets.
+    public entry fun batch_transfer_fungible_assets(
+        from: &signer,
+        metadata: Object<Metadata>,
+        recipients: vector<address>,
+        amounts: vector<u64>
+    ) {
+        let recipients_len = vector::length(&recipients);
+        assert!(
+            recipients_len == vector::length(&amounts),
+            error::invalid_argument(EMISMATCHING_RECIPIENTS_AND_AMOUNTS_LENGTH),
+        );
+
+        vector::enumerate_ref(&recipients, |i, to| {
+            let amount = *vector::borrow(&amounts, i);
+            transfer_fungible_assets(from, metadata, *to, amount);
+        });
+    }
+
+    /// Convenient function to deposit fungible asset into a recipient account that might not exist.
+    /// This would create the recipient account first to receive the fungible assets.
+    public entry fun transfer_fungible_assets(from: &signer, metadata: Object<Metadata>, to: address, amount: u64) {
+        deposit_fungible_assets(to, primary_fungible_store::withdraw(from, metadata, amount));
+    }
+
+    /// Convenient function to deposit fungible asset into a recipient account that might not exist.
+    /// This would create the recipient account first to receive the fungible assets.
+    public fun deposit_fungible_assets(to: address, fa: FungibleAsset) {
+        if (!account::exists_at(to)) {
+            create_account(to);
+        };
+        primary_fungible_store::deposit(to, fa)
+    }
+
     public fun assert_account_exists(addr: address) {
         assert!(account::exists_at(addr), error::not_found(EACCOUNT_NOT_FOUND));
     }
@@ -212,7 +247,7 @@ module aptos_framework::aptos_account {
         // as APT cannot be frozen or have dispatch, and PFS cannot be transfered
         // (PFS could potentially be burned. regular transfer would permanently unburn the store.
         // Ignoring the check here has the equivalent of unburning, transfers, and then burning again)
-        fungible_asset::deposit_internal(recipient_store, fungible_asset::withdraw_internal(sender_store, amount));
+        fungible_asset::unchecked_deposit(recipient_store, fungible_asset::unchecked_withdraw(sender_store, amount));
     }
 
     /// Is balance from APT Primary FungibleStore at least the given amount
@@ -221,8 +256,8 @@ module aptos_framework::aptos_account {
         fungible_asset::is_address_balance_at_least(store_addr, amount)
     }
 
-    /// Burn from APT Primary FungibleStore
-    public(friend) fun burn_from_fungible_store(
+    /// Burn from APT Primary FungibleStore for gas charge
+    public(friend) fun burn_from_fungible_store_for_gas(
         ref: &BurnRef,
         account: address,
         amount: u64,
@@ -230,7 +265,7 @@ module aptos_framework::aptos_account {
         // Skip burning if amount is zero. This shouldn't error out as it's called as part of transaction fee burning.
         if (amount != 0) {
             let store_addr = primary_fungible_store_address(account);
-            fungible_asset::address_burn_from(ref, store_addr, amount);
+            fungible_asset::address_burn_from_for_gas(ref, store_addr, amount);
         };
     }
 
