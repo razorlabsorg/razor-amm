@@ -12,7 +12,7 @@ compiled_package_info:
     bob: 0000000000000000000000000000000000000000000000000000000000000b0b
     core_resources: 000000000000000000000000000000000000000000000000000000000a550c18
     fee_admin: 703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839
-    razor_amm: 13253effc048095b933b0d2ffe307913b074fb3b9f56780cc2495e18f0e6e14d
+    razor_amm: 0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a
     std: "0000000000000000000000000000000000000000000000000000000000000001"
     vm: "0000000000000000000000000000000000000000000000000000000000000000"
     vm_reserved: "0000000000000000000000000000000000000000000000000000000000000000"
@@ -28,7 +28,7 @@ compiled_package_info:
     install_dir: ~
     force_recompilation: false
     additional_named_addresses:
-      razor_amm: 13253effc048095b933b0d2ffe307913b074fb3b9f56780cc2495e18f0e6e14d
+      razor_amm: 0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a
     architecture: ~
     fetch_deps_only: false
     skip_fetch_latest_git_deps: true
@@ -52,11 +52,10 @@ compiled_package_info:
         - test_only
         - verify_only
         - view
-      skip_attribute_checks: false
+      skip_attribute_checks: true
       compiler_version: V2_0
       language_version: V2_1
-      experiments:
-        - optimize=on
+      experiments: []
 dependencies:
   - AptosFramework
   - AptosStdlib

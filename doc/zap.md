@@ -1,30 +1,35 @@
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap"></a>
 
-# Module `0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839::zap`
+# Module `0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::zap`
 
 
 
--  [Resource `Zap`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_Zap)
--  [Struct `NewMaxZapReserveRatioEvent`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_NewMaxZapReserveRatioEvent)
--  [Struct `ZapInEvent`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapInEvent)
--  [Struct `ZapInRebalancingEvent`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapInRebalancingEvent)
--  [Struct `ZapOutEvent`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapOutEvent)
+-  [Resource `Zap`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_Zap)
+-  [Struct `NewMaxZapReserveRatioEvent`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_NewMaxZapReserveRatioEvent)
+-  [Struct `ZapInEvent`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapInEvent)
+-  [Struct `ZapInRebalancingEvent`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapInRebalancingEvent)
+-  [Struct `ZapOutEvent`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapOutEvent)
 -  [Constants](#@Constants_0)
--  [Function `is_initialized`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_is_initialized)
--  [Function `zap_in_move`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_move)
--  [Function `zap_in_token`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_token)
--  [Function `zap_in_token_rebalancing`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_token_rebalancing)
--  [Function `zap_in_move_rebalancing`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_move_rebalancing)
--  [Function `zap_out_move`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_out_move)
--  [Function `zap_out_token`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_out_token)
--  [Function `update_max_zap_reserve_ratio`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_update_max_zap_reserve_ratio)
--  [Function `estimate_zap_in_swap`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_in_swap)
--  [Function `estimate_zap_in_rebalancing_swap`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_in_rebalancing_swap)
--  [Function `estimate_zap_out_swap`](#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_out_swap)
+-  [Function `is_initialized`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_is_initialized)
+-  [Function `zap_in_move`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_move)
+-  [Function `zap_in_token`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_token)
+-  [Function `zap_in_token_rebalancing`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_token_rebalancing)
+-  [Function `zap_in_move_rebalancing`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_move_rebalancing)
+-  [Function `zap_out_move`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_out_move)
+-  [Function `zap_out_token`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_out_token)
+-  [Function `update_max_zap_reserve_ratio`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_update_max_zap_reserve_ratio)
+-  [Function `estimate_zap_in_swap`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_in_swap)
+-  [Function `estimate_zap_in_rebalancing_swap`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_in_rebalancing_swap)
+-  [Function `estimate_zap_out_swap`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_out_swap)
 
 
-<pre><code><b>use</b> <a href="">0x1::aptos_coin</a>;
+<pre><code><b>use</b> <a href="controller.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_controller">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::controller</a>;
+<b>use</b> <a href="math.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_math">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::math</a>;
+<b>use</b> <a href="pair.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_pair">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::pair</a>;
+<b>use</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::router</a>;
+<b>use</b> <a href="swap_library.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_swap_library">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::swap_library</a>;
+<b>use</b> <a href="">0x1::aptos_coin</a>;
 <b>use</b> <a href="">0x1::coin</a>;
 <b>use</b> <a href="">0x1::event</a>;
 <b>use</b> <a href="">0x1::fungible_asset</a>;
@@ -33,70 +38,65 @@
 <b>use</b> <a href="">0x1::primary_fungible_store</a>;
 <b>use</b> <a href="">0x1::signer</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
-<b>use</b> <a href="controller.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_controller">0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839::controller</a>;
-<b>use</b> <a href="math.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_math">0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839::math</a>;
-<b>use</b> <a href="pair.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_pair">0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839::pair</a>;
-<b>use</b> <a href="router.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_router">0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839::router</a>;
-<b>use</b> <a href="swap_library.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_swap_library">0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839::swap_library</a>;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_Zap"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_Zap"></a>
 
 ## Resource `Zap`
 
 
 
-<pre><code><b>struct</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_Zap">Zap</a> <b>has</b> key
+<pre><code><b>struct</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_Zap">Zap</a> <b>has</b> key
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_NewMaxZapReserveRatioEvent"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_NewMaxZapReserveRatioEvent"></a>
 
 ## Struct `NewMaxZapReserveRatioEvent`
 
 
 
 <pre><code>#[<a href="">event</a>]
-<b>struct</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_NewMaxZapReserveRatioEvent">NewMaxZapReserveRatioEvent</a> <b>has</b> drop, store
+<b>struct</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_NewMaxZapReserveRatioEvent">NewMaxZapReserveRatioEvent</a> <b>has</b> drop, store
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapInEvent"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapInEvent"></a>
 
 ## Struct `ZapInEvent`
 
 
 
 <pre><code>#[<a href="">event</a>]
-<b>struct</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapInEvent">ZapInEvent</a> <b>has</b> drop, store
+<b>struct</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapInEvent">ZapInEvent</a> <b>has</b> drop, store
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapInRebalancingEvent"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapInRebalancingEvent"></a>
 
 ## Struct `ZapInRebalancingEvent`
 
 
 
 <pre><code>#[<a href="">event</a>]
-<b>struct</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapInRebalancingEvent">ZapInRebalancingEvent</a> <b>has</b> drop, store
+<b>struct</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapInRebalancingEvent">ZapInRebalancingEvent</a> <b>has</b> drop, store
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapOutEvent"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapOutEvent"></a>
 
 ## Struct `ZapOutEvent`
 
 
 
 <pre><code>#[<a href="">event</a>]
-<b>struct</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ZapOutEvent">ZapOutEvent</a> <b>has</b> drop, store
+<b>struct</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ZapOutEvent">ZapOutEvent</a> <b>has</b> drop, store
 </code></pre>
 
 
@@ -106,223 +106,223 @@
 ## Constants
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_INSUFFICIENT_LIQUIDITY_MINT"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_INSUFFICIENT_LIQUIDITY_MINT"></a>
 
 Insufficient liquidity to mint
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_INSUFFICIENT_LIQUIDITY_MINT">ERROR_INSUFFICIENT_LIQUIDITY_MINT</a>: u64 = 7;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_INSUFFICIENT_LIQUIDITY_MINT">ERROR_INSUFFICIENT_LIQUIDITY_MINT</a>: u64 = 7;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_WMOVE"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_WMOVE"></a>
 
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_WMOVE">WMOVE</a>: <b>address</b> = 0xa;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_WMOVE">WMOVE</a>: <b>address</b> = 0xa;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_AMOUNT_TOO_LOW"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_AMOUNT_TOO_LOW"></a>
 
 Zap amount too low
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_AMOUNT_TOO_LOW">ERROR_AMOUNT_TOO_LOW</a>: u64 = 1;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_AMOUNT_TOO_LOW">ERROR_AMOUNT_TOO_LOW</a>: u64 = 1;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_INSUFFICIENT_RESERVES"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_INSUFFICIENT_RESERVES"></a>
 
 Insufficient reserves
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_INSUFFICIENT_RESERVES">ERROR_INSUFFICIENT_RESERVES</a>: u64 = 3;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_INSUFFICIENT_RESERVES">ERROR_INSUFFICIENT_RESERVES</a>: u64 = 3;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_INVALID_TOKEN"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_INVALID_TOKEN"></a>
 
 Wrong Zap Token
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_INVALID_TOKEN">ERROR_INVALID_TOKEN</a>: u64 = 2;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_INVALID_TOKEN">ERROR_INVALID_TOKEN</a>: u64 = 2;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_MAX_ZAP_RESERVE_RATIO"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_MAX_ZAP_RESERVE_RATIO"></a>
 
 Quantity higher than limit
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_MAX_ZAP_RESERVE_RATIO">ERROR_MAX_ZAP_RESERVE_RATIO</a>: u64 = 4;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_MAX_ZAP_RESERVE_RATIO">ERROR_MAX_ZAP_RESERVE_RATIO</a>: u64 = 4;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_NOT_ADMIN"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_NOT_ADMIN"></a>
 
 Not admin
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_NOT_ADMIN">ERROR_NOT_ADMIN</a>: u64 = 8;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_NOT_ADMIN">ERROR_NOT_ADMIN</a>: u64 = 8;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_SAME_TOKEN"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_SAME_TOKEN"></a>
 
 Identical tokens
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_SAME_TOKEN">ERROR_SAME_TOKEN</a>: u64 = 6;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_SAME_TOKEN">ERROR_SAME_TOKEN</a>: u64 = 6;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_WRONG_TRADE_DIRECTION"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_WRONG_TRADE_DIRECTION"></a>
 
 Wrong trade direction
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_ERROR_WRONG_TRADE_DIRECTION">ERROR_WRONG_TRADE_DIRECTION</a>: u64 = 5;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_ERROR_WRONG_TRADE_DIRECTION">ERROR_WRONG_TRADE_DIRECTION</a>: u64 = 5;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_MINIMUM_AMOUNT"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_MINIMUM_AMOUNT"></a>
 
 
 
-<pre><code><b>const</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_MINIMUM_AMOUNT">MINIMUM_AMOUNT</a>: u64 = 1000;
+<pre><code><b>const</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_MINIMUM_AMOUNT">MINIMUM_AMOUNT</a>: u64 = 1000;
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_is_initialized"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_is_initialized"></a>
 
 ## Function `is_initialized`
 
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_is_initialized">is_initialized</a>(): bool
+<b>public</b> <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_is_initialized">is_initialized</a>(): bool
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_move"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_move"></a>
 
 ## Function `zap_in_move`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_move">zap_in_move</a>(sender: &<a href="">signer</a>, lp_token: <b>address</b>, amount_in: u64, token_amount_out_min: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_move">zap_in_move</a>(sender: &<a href="">signer</a>, lp_token: <b>address</b>, amount_in: u64, token_amount_out_min: u64)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_token"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_token"></a>
 
 ## Function `zap_in_token`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_token">zap_in_token</a>(sender: &<a href="">signer</a>, token_to_zap: <b>address</b>, token_amount_in: u64, lp_token: <b>address</b>, token_amount_out_min: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_token">zap_in_token</a>(sender: &<a href="">signer</a>, token_to_zap: <b>address</b>, token_amount_in: u64, lp_token: <b>address</b>, token_amount_out_min: u64)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_token_rebalancing"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_token_rebalancing"></a>
 
 ## Function `zap_in_token_rebalancing`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_token_rebalancing">zap_in_token_rebalancing</a>(sender: &<a href="">signer</a>, token0_to_zap: <b>address</b>, token1_to_zap: <b>address</b>, token0_amount_in: u64, token1_amount_in: u64, lp_token: <b>address</b>, token_amount_in_max: u64, token_amount_out_min: u64, is_token0_sold: bool)
+<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_token_rebalancing">zap_in_token_rebalancing</a>(sender: &<a href="">signer</a>, token0_to_zap: <b>address</b>, token1_to_zap: <b>address</b>, token0_amount_in: u64, token1_amount_in: u64, lp_token: <b>address</b>, token_amount_in_max: u64, token_amount_out_min: u64, is_token0_sold: bool)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_move_rebalancing"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_move_rebalancing"></a>
 
 ## Function `zap_in_move_rebalancing`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_in_move_rebalancing">zap_in_move_rebalancing</a>(sender: &<a href="">signer</a>, token1_to_zap: <b>address</b>, move_amount_in: u64, token1_amount_in: u64, lp_token: <b>address</b>, token_amount_in_max: u64, token_amount_out_min: u64, is_token0_sold: bool)
+<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_in_move_rebalancing">zap_in_move_rebalancing</a>(sender: &<a href="">signer</a>, token1_to_zap: <b>address</b>, move_amount_in: u64, token1_amount_in: u64, lp_token: <b>address</b>, token_amount_in_max: u64, token_amount_out_min: u64, is_token0_sold: bool)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_out_move"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_out_move"></a>
 
 ## Function `zap_out_move`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_out_move">zap_out_move</a>(sender: &<a href="">signer</a>, lp_token: <b>address</b>, lp_token_amount: u64, token_amount_out_min: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_out_move">zap_out_move</a>(sender: &<a href="">signer</a>, lp_token: <b>address</b>, lp_token_amount: u64, token_amount_out_min: u64)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_out_token"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_out_token"></a>
 
 ## Function `zap_out_token`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_zap_out_token">zap_out_token</a>(sender: &<a href="">signer</a>, lp_token: <b>address</b>, token_to_receive: <b>address</b>, lp_token_amount: u64, token_amount_out_min: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_zap_out_token">zap_out_token</a>(sender: &<a href="">signer</a>, lp_token: <b>address</b>, token_to_receive: <b>address</b>, lp_token_amount: u64, token_amount_out_min: u64)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_update_max_zap_reserve_ratio"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_update_max_zap_reserve_ratio"></a>
 
 ## Function `update_max_zap_reserve_ratio`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_update_max_zap_reserve_ratio">update_max_zap_reserve_ratio</a>(sender: &<a href="">signer</a>, max_zap_reserve_ratio: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_update_max_zap_reserve_ratio">update_max_zap_reserve_ratio</a>(sender: &<a href="">signer</a>, max_zap_reserve_ratio: u64)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_in_swap"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_in_swap"></a>
 
 ## Function `estimate_zap_in_swap`
 
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_in_swap">estimate_zap_in_swap</a>(token_to_zap: <b>address</b>, token_amount_in: u64, lp_token: <b>address</b>): (u64, u64, <b>address</b>)
+<b>public</b> <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_in_swap">estimate_zap_in_swap</a>(token_to_zap: <b>address</b>, token_amount_in: u64, lp_token: <b>address</b>): (u64, u64, <b>address</b>)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_in_rebalancing_swap"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_in_rebalancing_swap"></a>
 
 ## Function `estimate_zap_in_rebalancing_swap`
 
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_in_rebalancing_swap">estimate_zap_in_rebalancing_swap</a>(token0_to_zap: <b>address</b>, token1_to_zap: <b>address</b>, token0_amount_in: u64, token1_amount_in: u64, lp_token: <b>address</b>): (u64, u64, bool)
+<b>public</b> <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_in_rebalancing_swap">estimate_zap_in_rebalancing_swap</a>(token0_to_zap: <b>address</b>, token1_to_zap: <b>address</b>, token0_amount_in: u64, token1_amount_in: u64, lp_token: <b>address</b>): (u64, u64, bool)
 </code></pre>
 
 
 
-<a id="0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_out_swap"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_out_swap"></a>
 
 ## Function `estimate_zap_out_swap`
 
 
 
 <pre><code>#[view]
-<b>public</b> <b>fun</b> <a href="zap.md#0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839_zap_estimate_zap_out_swap">estimate_zap_out_swap</a>(lp_token: <b>address</b>, lp_token_amount: u64, token_to_receive: <b>address</b>): (u64, u64, <b>address</b>)
+<b>public</b> <b>fun</b> <a href="zap.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_zap_estimate_zap_out_swap">estimate_zap_out_swap</a>(lp_token: <b>address</b>, lp_token_amount: u64, token_to_receive: <b>address</b>): (u64, u64, <b>address</b>)
 </code></pre>

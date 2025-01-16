@@ -21,7 +21,7 @@ compile:
 	aptos move compile \
 	--skip-fetch-latest-git-deps \
 	--move-2 \
-	--included-artifacts $(ARTIFACTS_LEVEL) \
+	--included-artifacts none \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
 
 test:
@@ -51,6 +51,7 @@ upgrade:
 
 docs:
 	aptos move document \
+	--move-2 \
 	--skip-fetch-latest-git-deps \
 	--skip-attribute-checks \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
