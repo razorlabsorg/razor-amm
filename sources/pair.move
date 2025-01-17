@@ -184,7 +184,7 @@ module razor_amm::pair {
     token0: Object<Metadata>,
     token1: Object<Metadata>,
   ): Object<Pair> {
-    if (!sort::is_sorted(token0, token1)) {
+    if (!sort::is_sorted_two(token0, token1)) {
       return initialize(token1, token0)
     };
 
@@ -214,7 +214,7 @@ module razor_amm::pair {
     let token0 = fungible_asset::store_metadata(pair.token0);
     let token1 = fungible_asset::store_metadata(pair.token1);
 
-    if (sort::is_sorted(token0, token1)) {
+    if (sort::is_sorted_two(token0, token1)) {
       (token0, token1)
     } else {
       (token1, token0)
@@ -338,7 +338,7 @@ module razor_amm::pair {
     let sender_address = signer::address_of(sender);
     let token0 = fungible_asset::metadata_from_asset(&fungible_token0);
     let token1 = fungible_asset::metadata_from_asset(&fungible_token1);
-    if (!sort::is_sorted(token0, token1)) {
+    if (!sort::is_sorted_two(token0, token1)) {
       return mint(sender, fungible_token1, fungible_token0, to)
     };
 
@@ -449,7 +449,7 @@ module razor_amm::pair {
       lp_amount: amount,
     });
     
-    if (sort::is_sorted(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1))) {
+    if (sort::is_sorted_two(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1))) {
       (redeemed0, redeemed1)
     } else {
       (redeemed1, redeemed0)
@@ -554,7 +554,7 @@ module razor_amm::pair {
     token0: Object<Metadata>,
     token1: Object<Metadata>
   ): address {
-    if (!sort::is_sorted(token0, token1)) {
+    if (!sort::is_sorted_two(token0, token1)) {
       return liquidity_pool_address(token1, token0)
     };
 

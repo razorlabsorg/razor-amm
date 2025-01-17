@@ -70,7 +70,7 @@ module razor_amm::router {
     let pair = pair::liquidity_pool(token_a, token_b);
     let (reserve_a, reserve_b, _) = pair::get_reserves(pair);
 
-    if (!sort::is_sorted(token_a, token_b)) {
+    if (!sort::is_sorted_two(token_a, token_b)) {
       (reserve_a, reserve_b) = (reserve_b, reserve_a)
     };
 
@@ -474,7 +474,7 @@ module razor_amm::router {
 
     let amount_out = utils::get_amount_out(amount_in, reserve_in, reserve_out);
     let (zero, coins_out);
-    if (sort::is_sorted(from_token, to_token)) {
+    if (sort::is_sorted_two(from_token, to_token)) {
       (zero, coins_out) = pair::swap(sender, pair, token_in, 0, fungible_asset::zero(to_token), amount_out, to);
     } else {
       (coins_out, zero) = pair::swap(sender, pair, fungible_asset::zero(to_token), amount_out, token_in, 0, to);
