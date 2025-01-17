@@ -49,9 +49,9 @@
 <b>use</b> <a href="">0x1::string</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
 <b>use</b> <a href="">0x1::vector</a>;
-<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::math</a>;
-<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::sort</a>;
-<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::uq64x64</a>;
+<b>use</b> <a href="">0x8db41aabd74a67d027c7c337de314f085f7ec1e1a2985c500102d746407e723e::math</a>;
+<b>use</b> <a href="">0x8db41aabd74a67d027c7c337de314f085f7ec1e1a2985c500102d746407e723e::sort</a>;
+<b>use</b> <a href="">0x8db41aabd74a67d027c7c337de314f085f7ec1e1a2985c500102d746407e723e::uq64x64</a>;
 </code></pre>
 
 

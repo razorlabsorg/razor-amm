@@ -12,8 +12,8 @@
 <pre><code><b>use</b> <a href="pair.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_pair">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::pair</a>;
 <b>use</b> <a href="">0x1::object</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
-<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::math</a>;
-<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::uq64x64</a>;
+<b>use</b> <a href="">0x8db41aabd74a67d027c7c337de314f085f7ec1e1a2985c500102d746407e723e::math</a>;
+<b>use</b> <a href="">0x8db41aabd74a67d027c7c337de314f085f7ec1e1a2985c500102d746407e723e::uq64x64</a>;
 </code></pre>
 
 
