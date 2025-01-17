@@ -187,7 +187,7 @@ module razor_amm::router {
       factory::create_pair(sender, tokenA_addr, tokenB_addr);
     };
 
-    let (token0, token1) = sort::sort_tokens(tokenA, tokenB);
+    let (token0, token1) = sort::sort_two_tokens(tokenA, tokenB);
     let (amount0, amount1) = if (token0 == tokenA) {
         (amountADesired, amountBDesired)
     } else {
@@ -264,7 +264,7 @@ module razor_amm::router {
     let move_object = option::destroy_some(coin::paired_metadata<AptosCoin>());
     let move_addr = object::object_address(&move_object);
 
-    let (token0, token1) = sort::sort_tokens(token_object, move_object);
+    let (token0, token1) = sort::sort_two_tokens(token_object, move_object);
 
     if (!factory::pair_exists(token0, token1)) {
       factory::create_pair(sender, token, move_addr);
@@ -330,7 +330,7 @@ module razor_amm::router {
     let coin_object = option::destroy_some(coin::paired_metadata<CoinType>());
     let coin_addr = object::object_address(&coin_object);
 
-    let (token0, token1) = sort::sort_tokens(token_object, coin_object);
+    let (token0, token1) = sort::sort_two_tokens(token_object, coin_object);
 
     if (!factory::pair_exists(token0, token1)) {
         factory::create_pair(sender, token, coin_addr);
@@ -459,7 +459,7 @@ module razor_amm::router {
   ): FungibleAsset {
     // let account = signer::address_of(sender);
     let from_token = fungible_asset::asset_metadata(&token_in);
-    let (token0, token1) = sort::sort_tokens(from_token, to_token);
+    let (token0, token1) = sort::sort_two_tokens(from_token, to_token);
     let pair = pair::liquidity_pool(token0, token1);
 
     let amount_in = fungible_asset::amount(&token_in);
@@ -546,7 +546,7 @@ module razor_amm::router {
     while (i > 0) {
       let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, i - 1));
       let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i));
-      let (token0, token1) = sort::sort_tokens(from_token, to_token);
+      let (token0, token1) = sort::sort_two_tokens(from_token, to_token);
       let pair = pair::liquidity_pool(token0, token1);
       let (reserve_in, reserve_out, _) = pair::get_reserves(pair);
       let amount_in = utils::get_amount_in(current_amount_out, reserve_in, reserve_out);
@@ -646,7 +646,7 @@ module razor_amm::router {
     while (i > 0) {
       let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, i - 1));
       let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i));
-      let (token0, token1) = sort::sort_tokens(from_token, to_token);
+      let (token0, token1) = sort::sort_two_tokens(from_token, to_token);
       let pair = pair::liquidity_pool(token0, token1);
       let (reserve_in, reserve_out, _) = pair::get_reserves(pair);
       let amount_in = utils::get_amount_in(current_amount_out, reserve_in, reserve_out);
@@ -725,7 +725,7 @@ module razor_amm::router {
     while (i > 0) {
       let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, i - 1));
       let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i));
-      let (token0, token1) = sort::sort_tokens(from_token, to_token);
+      let (token0, token1) = sort::sort_two_tokens(from_token, to_token);
       let pair = pair::liquidity_pool(token0, token1);
       let (reserve_in, reserve_out, _) = pair::get_reserves(pair);
       let amount_in = utils::get_amount_in(current_amount_out, reserve_in, reserve_out);
@@ -842,7 +842,7 @@ module razor_amm::router {
     while (i > 0) {
       let from_token = object::address_to_object<Metadata>(*vector::borrow(&path, i - 1));
       let to_token = object::address_to_object<Metadata>(*vector::borrow(&path, i));
-      let (token0, token1) = sort::sort_tokens(from_token, to_token);
+      let (token0, token1) = sort::sort_two_tokens(from_token, to_token);
       let pair = pair::liquidity_pool(token0, token1);
       let (reserve_in, reserve_out, _) = pair::get_reserves(pair);
       let amount_in = utils::get_amount_in(current_amount_out, reserve_in, reserve_out);
@@ -902,7 +902,7 @@ module razor_amm::router {
       let token_a = *vector::borrow(&path, k);
       let token_b = *vector::borrow(&path, k + 1);
       // We should sort the tokens to ensure correct reserve order
-      let (token0, token1) = sort::sort_tokens(token_a, token_b);
+      let (token0, token1) = sort::sort_two_tokens(token_a, token_b);
       let pair = pair::liquidity_pool(token0, token1);
       let (reserve0, reserve1, _) = pair::get_reserves(pair);
       
@@ -947,7 +947,7 @@ module razor_amm::router {
       let token_a = *vector::borrow(&path, k - 1);
       let token_b = *vector::borrow(&path, k);
       // We should sort the tokens to ensure correct reserve order
-      let (token0, token1) = sort::sort_tokens(token_a, token_b);
+      let (token0, token1) = sort::sort_two_tokens(token_a, token_b);
       let pair = pair::liquidity_pool(token0, token1);
       let (reserve0, reserve1, _) = pair::get_reserves(pair);
       

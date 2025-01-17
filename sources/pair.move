@@ -609,7 +609,7 @@ module razor_amm::pair {
   }
 
   public inline fun get_pair_seed(token0: Object<Metadata>, token1: Object<Metadata>): vector<u8> {
-    let (tokenA, tokenB) = sort::sort_tokens(token0, token1);
+    let (tokenA, tokenB) = sort::sort_two_tokens(token0, token1);
     let seeds = vector[];
     vector::append(&mut seeds, bcs::to_bytes(&object::object_address(&tokenA)));
     vector::append(&mut seeds, bcs::to_bytes(&object::object_address(&tokenB)));

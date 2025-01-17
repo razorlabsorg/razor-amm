@@ -50,8 +50,8 @@ Handles all swap operations and liquidity management
 <b>use</b> <a href="">0x1::primary_fungible_store</a>;
 <b>use</b> <a href="">0x1::signer</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
-<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::sort</a>;
-<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::utils</a>;
+<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::sort</a>;
+<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::utils</a>;
 </code></pre>
 
 

@@ -41,7 +41,7 @@
 <b>use</b> <a href="">0x1::simple_map</a>;
 <b>use</b> <a href="">0x1::smart_vector</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
-<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::sort</a>;
+<b>use</b> <a href="">0xa08003c4b388cecfe32d8b8ccf6b0dfaf84b449860895d3bb0a0c841798f62d0::sort</a>;
 </code></pre>
 
 

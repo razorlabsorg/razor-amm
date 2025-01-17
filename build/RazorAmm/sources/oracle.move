@@ -165,7 +165,7 @@ module razor_amm::oracle {
     let observation = simple_map::borrow(&pair_observations, &pair);
     let time_elapsed = timestamp::now_seconds() - observation.timestamp;
     
-    let (token0, _) = sort::sort_tokens(token_in, token_out);
+    let (token0, _) = sort::sort_two_tokens(token_in, token_out);
 
     if (token0 == token_in) {
       return compute_amount_out(observation.price_0_cumulative, price_0_cumulative, time_elapsed, amount_in)
