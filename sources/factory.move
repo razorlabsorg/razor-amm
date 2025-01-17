@@ -1,4 +1,4 @@
-module razor_amm::factory {
+module razor_amm::amm_factory {
   use std::vector;
   use std::signer;
 
@@ -9,8 +9,8 @@ module razor_amm::factory {
   use aptos_framework::fungible_asset::Metadata;
   use aptos_framework::object::{Self, Object};
 
-  use razor_amm::controller;
-  use razor_amm::pair::{Self, Pair};
+  use razor_amm::amm_controller;
+  use razor_amm::amm_pair::{Self, Pair};
 
   use razor_libs::sort;
 
@@ -54,9 +54,9 @@ module razor_amm::factory {
     assert!(tokenA != tokenB, ERROR_IDENTICAL_ADDRESSES);
     let (token0, token1) = sort::sort_two_tokens(token0_object, token1_object);
     assert!(pair_exists(token0, token1) == false, ERROR_PAIR_EXISTS);
-    let pair = pair::initialize(token0, token1);
+    let pair = amm_pair::initialize(token0, token1);
     let pair_address = object::object_address(&pair);
-    let pair_seed = pair::get_pair_seed(token0, token1);
+    let pair_seed = amm_pair::get_pair_seed(token0, token1);
     smart_vector::push_back(&mut safe_factory_mut().all_pairs, pair_address);
     simple_map::add(&mut safe_factory_mut().pair_map, pair_seed, pair_address);
 
@@ -109,7 +109,7 @@ module razor_amm::factory {
     let token0_object = object::address_to_object<Metadata>(tokenA);
     let token1_object = object::address_to_object<Metadata>(tokenB);
     let (token0, token1) = sort::sort_two_tokens(token0_object, token1_object);
-    let pair_seed = pair::get_pair_seed(token0, token1);
+    let pair_seed = amm_pair::get_pair_seed(token0, token1);
     let pair_map = &safe_factory().pair_map;
     if (simple_map::contains_key(pair_map, &pair_seed) == true) {
       return *simple_map::borrow(pair_map, &pair_seed)
@@ -125,7 +125,7 @@ module razor_amm::factory {
     token_b: Object<Metadata>,
   ): Object<Pair> {
     let (token0, token1) = sort::sort_two_tokens(token_a, token_b);
-    pair::liquidity_pool(token0, token1)
+    amm_pair::liquidity_pool(token0, token1)
   }
 
   // fetches and sorts the reserves for a pair
@@ -140,8 +140,8 @@ module razor_amm::factory {
     assert!(token_a != token_b, ERROR_IDENTICAL_ADDRESSES);
     
     let (token0, token1) = sort::sort_two_tokens(token_a_metadata, token_b_metadata);
-    let pair = pair::liquidity_pool(token0, token1);
-    let (reserve0, reserve1, _) = pair::get_reserves(pair);
+    let pair = amm_pair::liquidity_pool(token0, token1);
+    let (reserve0, reserve1, _) = amm_pair::get_reserves(pair);
     if (token_a_metadata == token0) {
       (reserve0, reserve1)
     } else {
@@ -152,7 +152,7 @@ module razor_amm::factory {
   #[view]
   public fun pair_exists(tokenA: Object<Metadata>, tokenB: Object<Metadata>): bool acquires Factory {
     let (token0, token1) = sort::sort_two_tokens(tokenA, tokenB);
-    let pair_seed = pair::get_pair_seed(token0, token1);
+    let pair_seed = amm_pair::get_pair_seed(token0, token1);
     let pair_map = &safe_factory().pair_map;
     let pair_exists = simple_map::contains_key(pair_map, &pair_seed);
     return pair_exists
@@ -161,7 +161,7 @@ module razor_amm::factory {
   #[view]
   public fun pair_exists_safe(tokenA: Object<Metadata>, tokenB: Object<Metadata>): bool {
     let (token0, token1) = sort::sort_two_tokens(tokenA, tokenB);
-    let (is_exists, _) = pair::liquidity_pool_address_safe(token0, token1);
+    let (is_exists, _) = amm_pair::liquidity_pool_address_safe(token0, token1);
     is_exists
   }
 
@@ -176,19 +176,19 @@ module razor_amm::factory {
   }
 
   public entry fun pause(account: &signer) {
-    controller::pause(account);
+    amm_controller::pause(account);
   }
 
   public entry fun unpause(account: &signer) {
-    controller::unpause(account);
+    amm_controller::unpause(account);
   }
 
   public entry fun set_admin(account: &signer, admin: address) {
-    controller::set_admin_address(account, admin);
+    amm_controller::set_admin_address(account, admin);
   }
 
   public entry fun claim_admin(account: &signer) {
-    controller::claim_admin(account);
+    amm_controller::claim_admin(account);
   }
 
   inline fun safe_factory(): &Factory acquires Factory {

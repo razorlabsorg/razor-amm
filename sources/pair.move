@@ -1,4 +1,4 @@
-module razor_amm::pair {
+module razor_amm::amm_pair {
   use std::bcs;
   use std::option;
   use std::signer;
@@ -12,15 +12,15 @@ module razor_amm::pair {
   use aptos_framework::primary_fungible_store;
   use aptos_framework::timestamp;
 
-  use razor_amm::controller;
+  use razor_amm::amm_controller;
 
   use razor_libs::math;
   use razor_libs::uq64x64;
   use razor_libs::sort;
   use razor_libs::token_utils;
 
-  friend razor_amm::factory;
-  friend razor_amm::router;
+  friend razor_amm::amm_factory;
+  friend razor_amm::amm_router;
 
   const MINIMUM_LIQUIDITY: u64 = 1000;
   const LP_TOKEN_DECIMALS: u8 = 8;
@@ -268,8 +268,8 @@ module razor_amm::pair {
   ): bool acquires Pair {
     let lp_address = object::object_address(&pair);
     let lp = pair_data_mut(&pair);
-    let fee_on = controller::get_fee_on();
-    let fee_to = controller::get_fee_to();
+    let fee_on = amm_controller::get_fee_on();
+    let fee_to = amm_controller::get_fee_to();
     let k_last = lp.k_last;
     if (fee_on) {
       if (k_last != 0) {
@@ -345,7 +345,7 @@ module razor_amm::pair {
 
     let pool = liquidity_pool(token0, token1);
     assert_locked(pool);
-    controller::assert_unpaused();
+    amm_controller::assert_unpaused();
     let acc_store = token_utils::ensure_account_token_store(to, pool);
 
     let amount0 = fungible_asset::amount(&fungible_token0);
@@ -404,7 +404,7 @@ module razor_amm::pair {
     amount: u64,
   ): (FungibleAsset, FungibleAsset) acquires Pair {
     assert_locked(pair);
-    controller::assert_unpaused();
+    amm_controller::assert_unpaused();
     assert!(amount > 0, ERROR_ZERO_AMOUNT);
     let sender_addr = signer::address_of(sender);
     let store = token_utils::ensure_account_token_store(sender_addr, pair);
@@ -424,7 +424,7 @@ module razor_amm::pair {
     let amount1 = ((amount as u128) * (reserve1 as u128) / total_supply as u64);
     assert!(amount0 > 0 && amount1 > 0, ERROR_INSUFFICIENT_LIQUIDITY_BURN);
 
-    let swap_signer = &controller::get_signer();
+    let swap_signer = &amm_controller::get_signer();
 
     let redeemed0 = dispatchable_fungible_asset::withdraw(swap_signer, store0, amount0);
     let redeemed1 = dispatchable_fungible_asset::withdraw(swap_signer, store1, amount1);
@@ -467,7 +467,7 @@ module razor_amm::pair {
     to: address,
   ): (FungibleAsset, FungibleAsset) acquires Pair {
     assert_locked(pair);
-    controller::assert_unpaused();
+    amm_controller::assert_unpaused();
 
     let amount0_in = fungible_asset::amount(&token0_in);
     let amount1_in = fungible_asset::amount(&token1_in);
@@ -480,7 +480,7 @@ module razor_amm::pair {
     let reserve0 = fungible_asset::balance(store0);
     let reserve1 = fungible_asset::balance(store1);
 
-    let swap_signer = &controller::get_signer();
+    let swap_signer = &amm_controller::get_signer();
 
     dispatchable_fungible_asset::deposit(store0, token0_in);
     dispatchable_fungible_asset::deposit(store1, token1_in);
@@ -560,7 +560,7 @@ module razor_amm::pair {
     };
 
     let seed = get_pair_seed(token0, token1);
-    object::create_object_address(&controller::get_signer_address(), seed)
+    object::create_object_address(&amm_controller::get_signer_address(), seed)
   }
 
   public inline fun pair_data<T: key>(pair: &Object<T>): &Pair acquires Pair {
@@ -577,7 +577,7 @@ module razor_amm::pair {
   ): &ConstructorRef {
     let token_name = lp_token_name(token0, token1);
     let seed = get_pair_seed(token0, token1);
-    let lp_token_constructor_ref = &object::create_named_object(&controller::get_signer(), seed);
+    let lp_token_constructor_ref = &object::create_named_object(&amm_controller::get_signer(), seed);
     primary_fungible_store::create_primary_store_enabled_fungible_asset(
       lp_token_constructor_ref,
       option::none(),
@@ -621,6 +621,6 @@ module razor_amm::pair {
     }
   }
 
-  #[test_only]
-  friend razor_amm::pair_tests;
+  // #[test_only]
+  // friend razor_amm::amm_pair_tests;
 }

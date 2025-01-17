@@ -1,4 +1,4 @@
-module razor_amm::oracle {
+module razor_amm::amm_oracle {
   use std::signer;
 
   use aptos_framework::block;
@@ -11,10 +11,10 @@ module razor_amm::oracle {
   use aptos_std::simple_map::{Self, SimpleMap};
   use aptos_std::smart_vector::{Self, SmartVector};
 
-  use razor_amm::controller;
-  use razor_amm::factory;
+  use razor_amm::amm_controller;
+  use razor_amm::amm_factory;
   use razor_amm::oracle_library;
-  use razor_amm::pair::{Self, Pair};
+  use razor_amm::amm_pair::{Self, Pair};
 
   use razor_libs::sort;
 
@@ -72,7 +72,7 @@ module razor_amm::oracle {
       return
     };
 
-    let swap_signer = &controller::get_signer();
+    let swap_signer = &amm_controller::get_signer();
     move_to(swap_signer, Oracle {
       anchor_token: anchor_token,
       block_info: BlockInfo {
@@ -90,8 +90,8 @@ module razor_amm::oracle {
   }
 
   public fun update(tokenA: Object<Metadata>, tokenB: Object<Metadata>): bool acquires Oracle {
-    let pair = pair::liquidity_pool(tokenA, tokenB);
-    if (!factory::pair_exists(tokenA, tokenB)) {
+    let pair = amm_pair::liquidity_pool(tokenA, tokenB);
+    if (!amm_factory::pair_exists(tokenA, tokenB)) {
       return false
     };
 
@@ -154,8 +154,8 @@ module razor_amm::oracle {
     amount_in: u64,
     token_out: Object<Metadata>,
   ): u64  acquires Oracle {
-    let pair = pair::liquidity_pool(token_in, token_out);
-    if (!factory::pair_exists(token_in, token_out)) {
+    let pair = amm_pair::liquidity_pool(token_in, token_out);
+    if (!amm_factory::pair_exists(token_in, token_out)) {
       return 0
     };
 
@@ -199,14 +199,14 @@ module razor_amm::oracle {
 
     if (token == anchor_token) {
       price = amount
-    } else if (factory::pair_exists(token, anchor_token)) {
+    } else if (amm_factory::pair_exists(token, anchor_token)) {
       price = consult(token, amount, anchor_token)
     } else {
       let length = get_router_token_length();
       let i = 0;
       while (i < length) {
         let intermediate = get_router_token(i);
-        if (factory::pair_exists(token, intermediate) && factory::pair_exists(intermediate, anchor_token)) {
+        if (amm_factory::pair_exists(token, intermediate) && amm_factory::pair_exists(intermediate, anchor_token)) {
           let inter_price = consult(token, amount, intermediate);
           price = consult(intermediate, inter_price, anchor_token);
           break
@@ -231,21 +231,21 @@ module razor_amm::oracle {
 
     if (token == anchor_token) {
       price = ((math64::pow(10, (anchor_token_decimal as u64))) as u128);
-    } else if (factory::pair_exists(token, anchor_token)) {
-      let pair = pair::liquidity_pool(token, anchor_token);
-      let (reserve0, reserve1, _) = pair::get_reserves(pair);
+    } else if (amm_factory::pair_exists(token, anchor_token)) {
+      let pair = amm_pair::liquidity_pool(token, anchor_token);
+      let (reserve0, reserve1, _) = amm_pair::get_reserves(pair);
       price = ((math64::pow(10, (token_decimal as u64)) * reserve1 / reserve0) as u128);
     } else {
       let length = get_router_token_length();
       let i = 0;
       while (i < length) {
         let intermediate = get_router_token(i);
-        if (factory::pair_exists(token, intermediate) && factory::pair_exists(intermediate, anchor_token)) {
-          let pair1 = pair::liquidity_pool(token, intermediate);
-          let (reserve0, reserve1, _) = pair::get_reserves(pair1);
+        if (amm_factory::pair_exists(token, intermediate) && amm_factory::pair_exists(intermediate, anchor_token)) {
+          let pair1 = amm_pair::liquidity_pool(token, intermediate);
+          let (reserve0, reserve1, _) = amm_pair::get_reserves(pair1);
           let amount_out = math64::pow(10, (token_decimal as u64)) * reserve1 / reserve0;
-          let pair2 = pair::liquidity_pool(intermediate, anchor_token);
-          let (reserve2, reserve3, _) = pair::get_reserves(pair2);
+          let pair2 = amm_pair::liquidity_pool(intermediate, anchor_token);
+          let (reserve2, reserve3, _) = amm_pair::get_reserves(pair2);
           price = ((amount_out * reserve3 / reserve2) as u128);
           break
         } else {
@@ -261,12 +261,12 @@ module razor_amm::oracle {
 
   #[view]
   public fun get_lp_token_value(lp_token: Object<Pair>, amount: u64): u64 acquires Oracle {
-    let total_supply = pair::lp_token_supply(lp_token);
+    let total_supply = amm_pair::lp_token_supply(lp_token);
 
-    let (token0, token1) = pair::unpack_pair(lp_token);
+    let (token0, token1) = amm_pair::unpack_pair(lp_token);
     let token0_decimal = fungible_asset::decimals(token0);
     let token1_decimal = fungible_asset::decimals(token1);
-    let (reserve0, reserve1, _) = pair::get_reserves(lp_token);
+    let (reserve0, reserve1, _) = amm_pair::get_reserves(lp_token);
 
     let token0_value = get_average_price(token0) * (reserve0 as u128) / ((math64::pow(10, (token0_decimal as u64))) as u128);
     let token1_value = get_average_price(token1) * (reserve1 as u128) / ((math64::pow(10, (token1_decimal as u64))) as u128);
@@ -290,7 +290,7 @@ module razor_amm::oracle {
   }
 
   public entry fun add_router_token(sender: &signer, token: Object<Metadata>) acquires Oracle {
-    assert!(signer::address_of(sender) == controller::get_admin(), ERROR_ONLY_ADMIN);
+    assert!(signer::address_of(sender) == amm_controller::get_admin(), ERROR_ONLY_ADMIN);
     let oracle = borrow_global_mut<Oracle>(@razor_amm);
     let tokens = &mut oracle.router_tokens;
     smart_vector::push_back(tokens, token);
@@ -302,7 +302,7 @@ module razor_amm::oracle {
   }
 
   public entry fun remove_router_token(sender: &signer, token: Object<Metadata>) acquires Oracle {
-    assert!(signer::address_of(sender) == controller::get_admin(), ERROR_ONLY_ADMIN);
+    assert!(signer::address_of(sender) == amm_controller::get_admin(), ERROR_ONLY_ADMIN);
     let oracle = borrow_global_mut<Oracle>(@razor_amm);
     let tokens = &mut oracle.router_tokens;
     let (_, index) = smart_vector::index_of(tokens, &token);

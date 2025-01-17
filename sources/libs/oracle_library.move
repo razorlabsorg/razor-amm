@@ -5,7 +5,7 @@ module razor_amm::oracle_library {
   use aptos_framework::object::Object;
   use aptos_framework::timestamp;
 
-  use razor_amm::pair::{Self, Pair};
+  use razor_amm::amm_pair::{Self, Pair};
   
   use razor_libs::math;
   use razor_libs::uq64x64;
@@ -20,9 +20,9 @@ module razor_amm::oracle_library {
   #[view]
   public fun current_cumulative_prices(pair: Object<Pair>): (u128, u128, u64) {
     let block_timestamp = current_block_timestamp();
-    let (price0, price1) = pair::get_cumulative_prices(pair);
+    let (price0, price1) = amm_pair::get_cumulative_prices(pair);
 
-    let (reserve0, reserve1, block_timestamp_last) = pair::get_reserves(pair);
+    let (reserve0, reserve1, block_timestamp_last) = amm_pair::get_reserves(pair);
     if (block_timestamp_last != block_timestamp) {
       let time_elapsed = ((block_timestamp - block_timestamp_last) as u128);
       let price0_delta = uq64x64::to_u128(uq64x64::fraction(reserve1, reserve0)) * time_elapsed;

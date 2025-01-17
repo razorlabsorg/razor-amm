@@ -8,10 +8,10 @@ module razor_amm::test_helpers {
     use aptos_framework::object;
     use aptos_framework::primary_fungible_store;
 
-    use razor_amm::controller;
+    use razor_amm::amm_controller;
 
     public fun set_up(deployer: &signer) {
-        controller::initialize_for_test(deployer);
+        amm_controller::initialize_for_test(deployer);
     }
 
     public fun create_fungible_asset_and_mint(creator: &signer, name: vector<u8>, amount: u64): FungibleAsset {

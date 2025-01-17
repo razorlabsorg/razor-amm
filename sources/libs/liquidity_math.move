@@ -9,8 +9,8 @@ module razor_amm::liquidity_math {
 
   use aptos_framework::object::Object;
 
-  use razor_amm::controller;
-  use razor_amm::pair::{Self, Pair};
+  use razor_amm::amm_controller;
+  use razor_amm::amm_pair::{Self, Pair};
 
   use razor_libs::math;
   use razor_libs::utils;
@@ -67,7 +67,7 @@ module razor_amm::liquidity_math {
     true_price_token_b: u64,
   ): (u64, u64) {
     // first get reserves before the swap
-    let (reserve_a, reserve_b, _) = pair::get_reserves(pair);
+    let (reserve_a, reserve_b, _) = amm_pair::get_reserves(pair);
     assert!(reserve_a > 0 && reserve_b > 0, ERROR_ZERO_PAIR_RESERVES);
 
     // then compute how much to swap to arb to the true price
@@ -128,11 +128,11 @@ module razor_amm::liquidity_math {
     pair: Object<Pair>,
     liquidity_amount: u64,
   ): (u128, u128) {
-    let (reserve_a, reserve_b, _) = pair::get_reserves(pair);
-    let fee_on = controller::get_fee_on();
-    let k_last = if (fee_on) pair::get_k_last(pair) else 0;
+    let (reserve_a, reserve_b, _) = amm_pair::get_reserves(pair);
+    let fee_on = amm_controller::get_fee_on();
+    let k_last = if (fee_on) amm_pair::get_k_last(pair) else 0;
     
-    let total_supply = pair::lp_token_supply(pair);
+    let total_supply = amm_pair::lp_token_supply(pair);
     let (liquidity_valueA, liquidity_valueB) = compute_liquidity_value(
       reserve_a, 
       reserve_b, 
@@ -156,9 +156,9 @@ module razor_amm::liquidity_math {
     true_price_token_b: u64,
     liquidity_amount: u64,
   ): (u128, u128) {
-    let fee_on = controller::get_fee_on();
-    let k_last = if (fee_on) pair::get_k_last(pair) else 0;
-    let total_supply = pair::lp_token_supply(pair);
+    let fee_on = amm_controller::get_fee_on();
+    let k_last = if (fee_on) amm_pair::get_k_last(pair) else 0;
+    let total_supply = amm_pair::lp_token_supply(pair);
 
     // this also checks that totalSupply > 0
     assert!(total_supply >= (liquidity_amount as u128) && liquidity_amount > 0, ERROR_INSUFFICIENT_LIQUIDITY);

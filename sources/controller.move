@@ -1,12 +1,12 @@
-module razor_amm::controller {
+module razor_amm::amm_controller {
   use std::signer;
 
   use aptos_framework::object::{Self, ExtendRef};
 
-  friend razor_amm::factory;
-  friend razor_amm::pair;
-  friend razor_amm::oracle;
-  friend razor_amm::zap;
+  friend razor_amm::amm_factory;
+  friend razor_amm::amm_pair;
+  friend razor_amm::amm_oracle;
+  friend razor_amm::amm_zap;
 
   const FEE_ADMIN: address = @fee_admin;
   const ADMIN: address = @admin;
@@ -166,9 +166,9 @@ module razor_amm::controller {
   }
 
   #[test_only]
-  friend razor_amm::controller_tests;
-  #[test_only]
-  friend razor_amm::pair_tests;
+  friend razor_amm::amm_controller_tests;
+  // #[test_only]
+  // friend razor_amm::amm_pair_tests;
 
   #[test_only]
   public fun initialize_for_testing(sender: &signer) {
