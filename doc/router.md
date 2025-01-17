@@ -36,11 +36,12 @@ Handles all swap operations and liquidity management
 -  [Function `swap_move_for_exact_tokens`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_swap_move_for_exact_tokens)
 -  [Function `swap_exact_coin_for_tokens`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_swap_exact_coin_for_tokens)
 -  [Function `swap_coin_for_exact_tokens`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_swap_coin_for_exact_tokens)
+-  [Function `get_amounts_out`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_get_amounts_out)
+-  [Function `get_amounts_in`](#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_get_amounts_in)
 
 
 <pre><code><b>use</b> <a href="factory.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_factory">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::factory</a>;
 <b>use</b> <a href="pair.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_pair">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::pair</a>;
-<b>use</b> <a href="swap_library.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_swap_library">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::swap_library</a>;
 <b>use</b> <a href="">0x1::aptos_coin</a>;
 <b>use</b> <a href="">0x1::coin</a>;
 <b>use</b> <a href="">0x1::fungible_asset</a>;
@@ -49,6 +50,8 @@ Handles all swap operations and liquidity management
 <b>use</b> <a href="">0x1::primary_fungible_store</a>;
 <b>use</b> <a href="">0x1::signer</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::sort</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::utils</a>;
 </code></pre>
 
 
@@ -78,12 +81,12 @@ Insufficient Output Amount
 
 
 
-<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INVALID_PATH"></a>
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INSUFFICIENT_AMOUNT"></a>
 
-Invalid Swap Path
+Insufficient Amount
 
 
-<pre><code><b>const</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INVALID_PATH">ERROR_INVALID_PATH</a>: u64 = 4;
+<pre><code><b>const</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INSUFFICIENT_AMOUNT">ERROR_INSUFFICIENT_AMOUNT</a>: u64 = 10;
 </code></pre>
 
 
@@ -108,6 +111,16 @@ Identical Tokens
 
 
 
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INSUFFICIENT_A_AMOUNT"></a>
+
+Insufficient A Amount
+
+
+<pre><code><b>const</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INSUFFICIENT_A_AMOUNT">ERROR_INSUFFICIENT_A_AMOUNT</a>: u64 = 11;
+</code></pre>
+
+
+
 <a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INSUFFICIENT_BALANCE"></a>
 
 Insufficient Balance
@@ -118,12 +131,42 @@ Insufficient Balance
 
 
 
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INSUFFICIENT_B_AMOUNT"></a>
+
+Insufficient B Amount
+
+
+<pre><code><b>const</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INSUFFICIENT_B_AMOUNT">ERROR_INSUFFICIENT_B_AMOUNT</a>: u64 = 12;
+</code></pre>
+
+
+
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INTERNAL_ERROR"></a>
+
+Internal Error
+
+
+<pre><code><b>const</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INTERNAL_ERROR">ERROR_INTERNAL_ERROR</a>: u64 = 13;
+</code></pre>
+
+
+
 <a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INVALID_AMOUNT"></a>
 
 Invalid Amount (zero or overflow)
 
 
 <pre><code><b>const</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INVALID_AMOUNT">ERROR_INVALID_AMOUNT</a>: u64 = 7;
+</code></pre>
+
+
+
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INVALID_PATH"></a>
+
+Invalid Swap Path
+
+
+<pre><code><b>const</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_ERROR_INVALID_PATH">ERROR_INVALID_PATH</a>: u64 = 4;
 </code></pre>
 
 
@@ -338,4 +381,28 @@ Invalid Token Order
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_swap_coin_for_exact_tokens">swap_coin_for_exact_tokens</a>&lt;CoinType&gt;(sender: &<a href="">signer</a>, amount_coin_max: u64, amount_out: u64, path: <a href="">vector</a>&lt;<b>address</b>&gt;, <b>to</b>: <b>address</b>, deadline: u64)
+</code></pre>
+
+
+
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_get_amounts_out"></a>
+
+## Function `get_amounts_out`
+
+
+
+<pre><code>#[view]
+<b>public</b> <b>fun</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_get_amounts_out">get_amounts_out</a>(amount_in: u64, path: <a href="">vector</a>&lt;<a href="_Object">object::Object</a>&lt;<a href="_Metadata">fungible_asset::Metadata</a>&gt;&gt;): <a href="">vector</a>&lt;u64&gt;
+</code></pre>
+
+
+
+<a id="0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_get_amounts_in"></a>
+
+## Function `get_amounts_in`
+
+
+
+<pre><code>#[view]
+<b>public</b> <b>fun</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router_get_amounts_in">get_amounts_in</a>(amount_out: u64, path: <a href="">vector</a>&lt;<a href="_Object">object::Object</a>&lt;<a href="_Metadata">fungible_asset::Metadata</a>&gt;&gt;): <a href="">vector</a>&lt;u64&gt;
 </code></pre>

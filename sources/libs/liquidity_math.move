@@ -10,10 +10,10 @@ module razor_amm::liquidity_math {
   use aptos_framework::object::Object;
 
   use razor_amm::controller;
-  use razor_amm::swap_library;
   use razor_amm::pair::{Self, Pair};
 
   use razor_libs::math;
+  use razor_libs::utils;
 
   /// Pair Reserves is Zero
   const ERROR_ZERO_PAIR_RESERVES: u64 = 1;
@@ -79,11 +79,11 @@ module razor_amm::liquidity_math {
 
     // now affect the trade to the reserves
     if (a_to_b) {
-      let amount_out = swap_library::get_amount_out(amount_in, reserve_a, reserve_b);
+      let amount_out = utils::get_amount_out(amount_in, reserve_a, reserve_b);
       reserve_a = reserve_a + amount_in;
       reserve_b = reserve_b - amount_out;
     } else {
-      let amount_out = swap_library::get_amount_out(amount_in, reserve_b, reserve_a);
+      let amount_out = utils::get_amount_out(amount_in, reserve_b, reserve_a);
       reserve_a = reserve_a - amount_out;
       reserve_b = reserve_b + amount_in;
     };

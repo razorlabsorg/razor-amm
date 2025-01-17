@@ -12,12 +12,13 @@ module razor_amm::zap {
   use aptos_framework::primary_fungible_store;
 
   use razor_libs::math;
+  use razor_libs::utils;
 
   use razor_amm::controller;
   use razor_amm::pair::{Self, Pair};
-  use razor_amm::swap_library;
   use razor_amm::router;
 
+  
   const MINIMUM_AMOUNT: u64 = 1000;
   const WMOVE: address = @0xa;
 
@@ -116,8 +117,8 @@ module razor_amm::zap {
     reserve1: u64,
   ): u64 {
     let half_token0_amount = token0_amount_in / 2;
-    let nominator = swap_library::get_amount_out(half_token0_amount, reserve0, reserve1);
-    let denominator = swap_library::quote(
+    let nominator = utils::get_amount_out(half_token0_amount, reserve0, reserve1);
+    let denominator = utils::quote(
       half_token0_amount,
       reserve0 + half_token0_amount,
       reserve1 - nominator
@@ -151,8 +152,8 @@ module razor_amm::zap {
 
     if (sell_token0) {
       let token0_amount_to_sell = (token0_amount_in - (token1_amount_in * reserve0) / reserve1) / 2;
-      let nominator = swap_library::get_amount_out(token0_amount_to_sell, reserve0, reserve1);
-      let denominator = swap_library::quote(
+      let nominator = utils::get_amount_out(token0_amount_to_sell, reserve0, reserve1);
+      let denominator = utils::quote(
         token0_amount_to_sell, 
         reserve0 + token0_amount_to_sell, 
         reserve1 - nominator
@@ -164,9 +165,9 @@ module razor_amm::zap {
       amount_to_swap = 2 * token0_amount_to_sell - math::sqrt_128(((token0_amount_to_sell as u128) * (token0_amount_to_sell as u128) * (nominator as u128)) / (denominator as u128));
     } else {
       let token_1_amount_to_sell = (token1_amount_in - (token0_amount_in * reserve1) / reserve0) / 2;
-      let nominator = swap_library::get_amount_out(token_1_amount_to_sell, reserve1, reserve0);
+      let nominator = utils::get_amount_out(token_1_amount_to_sell, reserve1, reserve0);
 
-      let denominator = swap_library::quote(
+      let denominator = utils::quote(
         token_1_amount_to_sell,
         reserve1 + token_1_amount_to_sell,
         reserve0 - nominator
@@ -223,7 +224,7 @@ module razor_amm::zap {
       }
     };
 
-    let swapped_amounts = swap_library::get_amounts_out(swap_amount_in, object_path);
+    let swapped_amounts = router::get_amounts_out(swap_amount_in, object_path);
 
     router::swap_exact_tokens_for_tokens(
       sender, 
@@ -313,7 +314,7 @@ module razor_amm::zap {
       vector::push_back(&mut object_path, object::address_to_object<Metadata>(token0_to_zap));
     };
 
-    let swapped_amounts = swap_library::get_amounts_out(swap_amount_in, object_path);
+    let swapped_amounts = router::get_amounts_out(swap_amount_in, object_path);
 
     router::swap_exact_tokens_for_tokens(
       sender,
@@ -582,11 +583,11 @@ module razor_amm::zap {
     if (token_to_zap == token0_address) {
       swap_token_out = token1_address;
       swap_amount_in = calculate_amount_to_swap(token_amount_in, reserve0, reserve1);
-      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve0, reserve1);
+      swap_amount_out = utils::get_amount_out(swap_amount_in, reserve0, reserve1);
     } else {
       swap_token_out = token0_address;
       swap_amount_in = calculate_amount_to_swap(token_amount_in, reserve1, reserve0);
-      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve1, reserve0);
+      swap_amount_out = utils::get_amount_out(swap_amount_in, reserve1, reserve0);
     };
 
     (swap_amount_in, swap_amount_out, swap_token_out)
@@ -635,9 +636,9 @@ module razor_amm::zap {
       );
 
       swap_amount_out = if (sell_token0) {
-        swap_library::get_amount_out(swap_amount_in, reserve0, reserve1)
+        utils::get_amount_out(swap_amount_in, reserve0, reserve1)
       } else {
-        swap_library::get_amount_out(swap_amount_in, reserve1, reserve0)
+        utils::get_amount_out(swap_amount_in, reserve1, reserve0)
       };
     } else {
       // Determine which token needs to be sold based on reserve ratios
@@ -657,9 +658,9 @@ module razor_amm::zap {
       );
 
       swap_amount_out = if (sell_token0) {
-        swap_library::get_amount_out(swap_amount_in, reserve1, reserve0)
+        utils::get_amount_out(swap_amount_in, reserve1, reserve0)
       } else {
-        swap_library::get_amount_out(swap_amount_in, reserve0, reserve1)
+        utils::get_amount_out(swap_amount_in, reserve0, reserve1)
       };
     };
 
@@ -689,12 +690,12 @@ module razor_amm::zap {
     if (token1_address == token_to_receive) {
       let token_amount_in = ((lp_token_amount * reserve0) as u128) / pair::lp_token_supply(lp_token_object);
       swap_amount_in = calculate_amount_to_swap((token_amount_in as u64), reserve0, reserve1);
-      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve0, reserve1);
+      swap_amount_out = utils::get_amount_out(swap_amount_in, reserve0, reserve1);
       swap_token_out = token0_address
     } else {
       let token_amount_in = ((lp_token_amount * reserve1) as u128) / pair::lp_token_supply(lp_token_object);
       swap_amount_in = calculate_amount_to_swap((token_amount_in as u64), reserve1, reserve0);
-      swap_amount_out = swap_library::get_amount_out(swap_amount_in, reserve1, reserve0);
+      swap_amount_out = utils::get_amount_out(swap_amount_in, reserve1, reserve0);
       swap_token_out = token1_address
     };
 

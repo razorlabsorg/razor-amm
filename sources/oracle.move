@@ -13,9 +13,10 @@ module razor_amm::oracle {
 
   use razor_amm::controller;
   use razor_amm::factory;
-  use razor_amm::swap_library;
   use razor_amm::oracle_library;
   use razor_amm::pair::{Self, Pair};
+
+  use razor_libs::sort;
 
   const MAX_U64: u64 = 18446744073709551615;
 
@@ -164,7 +165,7 @@ module razor_amm::oracle {
     let observation = simple_map::borrow(&pair_observations, &pair);
     let time_elapsed = timestamp::now_seconds() - observation.timestamp;
     
-    let (token0, _) = swap_library::sort_tokens(token_in, token_out);
+    let (token0, _) = sort::sort_tokens(token_in, token_out);
 
     if (token0 == token_in) {
       return compute_amount_out(observation.price_0_cumulative, price_0_cumulative, time_elapsed, amount_in)

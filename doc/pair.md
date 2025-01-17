@@ -39,7 +39,6 @@
 
 <pre><code><b>use</b> <a href="controller.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_controller">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::controller</a>;
 <b>use</b> <a href="">0x1::bcs</a>;
-<b>use</b> <a href="">0x1::comparator</a>;
 <b>use</b> <a href="">0x1::dispatchable_fungible_asset</a>;
 <b>use</b> <a href="">0x1::event</a>;
 <b>use</b> <a href="">0x1::fungible_asset</a>;
@@ -50,8 +49,9 @@
 <b>use</b> <a href="">0x1::string</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
 <b>use</b> <a href="">0x1::vector</a>;
-<b>use</b> <a href="">0xd7f96eefaebffd142905a66d68ea836927b56a95cb424e945ef28cd9353a5425::math</a>;
-<b>use</b> <a href="">0xd7f96eefaebffd142905a66d68ea836927b56a95cb424e945ef28cd9353a5425::uq64x64</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::math</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::sort</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::uq64x64</a>;
 </code></pre>
 
 

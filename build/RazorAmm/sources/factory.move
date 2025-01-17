@@ -11,7 +11,8 @@ module razor_amm::factory {
 
   use razor_amm::controller;
   use razor_amm::pair::{Self, Pair};
-  use razor_amm::swap_library;
+
+  use razor_libs::sort;
 
   /// Identical Addresses
   const ERROR_IDENTICAL_ADDRESSES: u64 = 1;
@@ -51,7 +52,7 @@ module razor_amm::factory {
     let token0_object = object::address_to_object<Metadata>(tokenA);
     let token1_object = object::address_to_object<Metadata>(tokenB);
     assert!(tokenA != tokenB, ERROR_IDENTICAL_ADDRESSES);
-    let (token0, token1) = swap_library::sort_tokens(token0_object, token1_object);
+    let (token0, token1) = sort::sort_tokens(token0_object, token1_object);
     assert!(pair_exists(token0, token1) == false, ERROR_PAIR_EXISTS);
     let pair = pair::initialize(token0, token1);
     let pair_address = object::object_address(&pair);
@@ -107,7 +108,7 @@ module razor_amm::factory {
   public fun get_pair(tokenA: address, tokenB: address): address acquires Factory {
     let token0_object = object::address_to_object<Metadata>(tokenA);
     let token1_object = object::address_to_object<Metadata>(tokenB);
-    let (token0, token1) = swap_library::sort_tokens(token0_object, token1_object);
+    let (token0, token1) = sort::sort_tokens(token0_object, token1_object);
     let pair_seed = pair::get_pair_seed(token0, token1);
     let pair_map = &safe_factory().pair_map;
     if (simple_map::contains_key(pair_map, &pair_seed) == true) {
@@ -117,9 +118,40 @@ module razor_amm::factory {
     }
   }
 
+  // fetches the liquidity pool for token_a and token_b
+  #[view]
+  public fun pair_for(
+    token_a: Object<Metadata>,
+    token_b: Object<Metadata>,
+  ): Object<Pair> {
+    let (token0, token1) = sort::sort_tokens(token_a, token_b);
+    pair::liquidity_pool(token0, token1)
+  }
+
+  // fetches and sorts the reserves for a pair
+  #[view]
+  public fun get_reserves(
+    token_a: address,
+    token_b: address,
+  ): (u64, u64) {
+    let token_a_metadata = object::address_to_object<Metadata>(token_a);
+    let token_b_metadata = object::address_to_object<Metadata>(token_b);
+    // We should check if the tokens are valid before sorting
+    assert!(token_a != token_b, ERROR_IDENTICAL_ADDRESSES);
+    
+    let (token0, token1) = sort::sort_tokens(token_a_metadata, token_b_metadata);
+    let pair = pair::liquidity_pool(token0, token1);
+    let (reserve0, reserve1, _) = pair::get_reserves(pair);
+    if (token_a_metadata == token0) {
+      (reserve0, reserve1)
+    } else {
+      (reserve1, reserve0)
+    }
+  }
+
   #[view]
   public fun pair_exists(tokenA: Object<Metadata>, tokenB: Object<Metadata>): bool acquires Factory {
-    let (token0, token1) = swap_library::sort_tokens(tokenA, tokenB);
+    let (token0, token1) = sort::sort_tokens(tokenA, tokenB);
     let pair_seed = pair::get_pair_seed(token0, token1);
     let pair_map = &safe_factory().pair_map;
     let pair_exists = simple_map::contains_key(pair_map, &pair_seed);
@@ -128,7 +160,7 @@ module razor_amm::factory {
 
   #[view]
   public fun pair_exists_safe(tokenA: Object<Metadata>, tokenB: Object<Metadata>): bool {
-    let (token0, token1) = swap_library::sort_tokens(tokenA, tokenB);
+    let (token0, token1) = sort::sort_tokens(tokenA, tokenB);
     let (is_exists, _) = pair::liquidity_pool_address_safe(token0, token1);
     is_exists
   }

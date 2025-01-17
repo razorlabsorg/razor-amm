@@ -27,7 +27,6 @@
 <pre><code><b>use</b> <a href="controller.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_controller">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::controller</a>;
 <b>use</b> <a href="pair.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_pair">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::pair</a>;
 <b>use</b> <a href="router.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_router">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::router</a>;
-<b>use</b> <a href="swap_library.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_swap_library">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::swap_library</a>;
 <b>use</b> <a href="">0x1::aptos_coin</a>;
 <b>use</b> <a href="">0x1::coin</a>;
 <b>use</b> <a href="">0x1::event</a>;
@@ -37,7 +36,8 @@
 <b>use</b> <a href="">0x1::primary_fungible_store</a>;
 <b>use</b> <a href="">0x1::signer</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
-<b>use</b> <a href="">0xd7f96eefaebffd142905a66d68ea836927b56a95cb424e945ef28cd9353a5425::math</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::math</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::utils</a>;
 </code></pre>
 
 

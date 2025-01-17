@@ -32,7 +32,6 @@
 <b>use</b> <a href="factory.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_factory">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::factory</a>;
 <b>use</b> <a href="oracle_library.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_oracle_library">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::oracle_library</a>;
 <b>use</b> <a href="pair.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_pair">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::pair</a>;
-<b>use</b> <a href="swap_library.md#0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a_swap_library">0x133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a::swap_library</a>;
 <b>use</b> <a href="">0x1::block</a>;
 <b>use</b> <a href="">0x1::event</a>;
 <b>use</b> <a href="">0x1::fungible_asset</a>;
@@ -42,6 +41,7 @@
 <b>use</b> <a href="">0x1::simple_map</a>;
 <b>use</b> <a href="">0x1::smart_vector</a>;
 <b>use</b> <a href="">0x1::timestamp</a>;
+<b>use</b> <a href="">0xeb2c1f2586f863cc1a1b71f6489a821473ef5e279bb2e00583ca97a299656fee::sort</a>;
 </code></pre>
 
 

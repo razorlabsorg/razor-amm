@@ -12,12 +12,11 @@ module razor_amm::pair {
   use aptos_framework::primary_fungible_store;
   use aptos_framework::timestamp;
 
-  use aptos_std::comparator;
-
   use razor_amm::controller;
 
   use razor_libs::math;
   use razor_libs::uq64x64;
+  use razor_libs::sort;
 
   friend razor_amm::factory;
   friend razor_amm::router;
@@ -185,7 +184,7 @@ module razor_amm::pair {
     token0: Object<Metadata>,
     token1: Object<Metadata>,
   ): Object<Pair> {
-    if (!is_sorted(token0, token1)) {
+    if (!sort::is_sorted(token0, token1)) {
       return initialize(token1, token0)
     };
 
@@ -215,7 +214,7 @@ module razor_amm::pair {
     let token0 = fungible_asset::store_metadata(pair.token0);
     let token1 = fungible_asset::store_metadata(pair.token1);
 
-    if (is_sorted(token0, token1)) {
+    if (sort::is_sorted(token0, token1)) {
       (token0, token1)
     } else {
       (token1, token0)
@@ -339,7 +338,7 @@ module razor_amm::pair {
     let sender_address = signer::address_of(sender);
     let token0 = fungible_asset::metadata_from_asset(&fungible_token0);
     let token1 = fungible_asset::metadata_from_asset(&fungible_token1);
-    if (!is_sorted(token0, token1)) {
+    if (!sort::is_sorted(token0, token1)) {
       return mint(sender, fungible_token1, fungible_token0, to)
     };
 
@@ -450,7 +449,7 @@ module razor_amm::pair {
       lp_amount: amount,
     });
     
-    if (is_sorted(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1))) {
+    if (sort::is_sorted(fungible_asset::store_metadata(lp.token0), fungible_asset::store_metadata(lp.token1))) {
       (redeemed0, redeemed1)
     } else {
       (redeemed1, redeemed0)
@@ -555,7 +554,7 @@ module razor_amm::pair {
     token0: Object<Metadata>,
     token1: Object<Metadata>
   ): address {
-    if (!is_sorted(token0, token1)) {
+    if (!sort::is_sorted(token0, token1)) {
       return liquidity_pool_address(token1, token0)
     };
 
@@ -609,25 +608,8 @@ module razor_amm::pair {
     token_symbol
   }
 
-  inline fun sort_tokens(
-    token_a: Object<Metadata>,
-    token_b: Object<Metadata>,
-  ): (Object<Metadata>, Object<Metadata>) {
-    let token_a_addr = object::object_address(&token_a);
-    let token_b_addr = object::object_address(&token_b);
-    assert!(token_a_addr != token_b_addr, ERROR_IDENTICAL_ADDRESSES);
-    let (token0, token1);
-    if (is_sorted(token_a, token_b)) {
-      (token0, token1) = (token_a, token_b)
-    } else {
-      (token0, token1) = (token_b, token_a)
-    };
-
-    (token0, token1)
-  }
-
   public inline fun get_pair_seed(token0: Object<Metadata>, token1: Object<Metadata>): vector<u8> {
-    let (tokenA, tokenB) = sort_tokens(token0, token1);
+    let (tokenA, tokenB) = sort::sort_tokens(token0, token1);
     let seeds = vector[];
     vector::append(&mut seeds, bcs::to_bytes(&object::object_address(&tokenA)));
     vector::append(&mut seeds, bcs::to_bytes(&object::object_address(&tokenB)));
@@ -637,12 +619,6 @@ module razor_amm::pair {
   inline fun create_token_store(pair_signer: &signer, token: Object<Metadata>): Object<FungibleStore> {
     let constructor_ref = &object::create_object_from_object(pair_signer);
     fungible_asset::create_store(constructor_ref, token)
-  }
-
-  inline fun is_sorted(token0: Object<Metadata>, token1: Object<Metadata>): bool {
-    let token0_addr = object::object_address(&token0);
-    let token1_addr = object::object_address(&token1);
-    comparator::is_smaller_than(&comparator::compare(&token0_addr, &token1_addr))
   }
 
   fun create_lp_token_refs(constructor_ref: &ConstructorRef): LPTokenRefs {
