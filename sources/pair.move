@@ -17,6 +17,7 @@ module razor_amm::pair {
   use razor_libs::math;
   use razor_libs::uq64x64;
   use razor_libs::sort;
+  use razor_libs::token_utils;
 
   friend razor_amm::factory;
   friend razor_amm::router;
@@ -320,7 +321,7 @@ module razor_amm::pair {
     amount: u64,
   ) acquires Pair {
     let pair_data = pair_data(&pair);
-    let acc_store = ensure_account_token_store(to, pair);
+    let acc_store = token_utils::ensure_account_token_store(to, pair);
     let mint_ref = &pair_data.lp_token_refs.mint_ref;
     let transfer_ref = &pair_data.lp_token_refs.transfer_ref;
     let lp_coins = fungible_asset::mint(mint_ref, amount);
@@ -345,7 +346,7 @@ module razor_amm::pair {
     let pool = liquidity_pool(token0, token1);
     assert_locked(pool);
     controller::assert_unpaused();
-    let acc_store = ensure_account_token_store(to, pool);
+    let acc_store = token_utils::ensure_account_token_store(to, pool);
 
     let amount0 = fungible_asset::amount(&fungible_token0);
     let amount1 = fungible_asset::amount(&fungible_token1);
@@ -406,7 +407,7 @@ module razor_amm::pair {
     controller::assert_unpaused();
     assert!(amount > 0, ERROR_ZERO_AMOUNT);
     let sender_addr = signer::address_of(sender);
-    let store = ensure_account_token_store(sender_addr, pair);
+    let store = token_utils::ensure_account_token_store(sender_addr, pair);
 
     // feeOn
     let fee_on = mint_fee(pair);
@@ -560,15 +561,6 @@ module razor_amm::pair {
 
     let seed = get_pair_seed(token0, token1);
     object::create_object_address(&controller::get_signer_address(), seed)
-  }
-
-  fun ensure_account_token_store<T: key>(
-    account: address, 
-    pair: Object<T>
-  ): Object<FungibleStore> {
-    primary_fungible_store::ensure_primary_store_exists(account, pair);
-    let store = primary_fungible_store::primary_store(account, pair);
-    store
   }
 
   public inline fun pair_data<T: key>(pair: &Object<T>): &Pair acquires Pair {
