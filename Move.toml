@@ -17,6 +17,6 @@ alice = "0xa11ce"
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", rev="main", subdir = "aptos-move/framework/aptos-framework" }
 AptosStdlib = { git = "https://github.com/aptos-labs/aptos-core.git", rev="main", subdir = "aptos-move/framework/aptos-stdlib" }
-RazorLibs = { git = "https://github.com/razorlabsorg/razor-libs.git", rev="main" }
+RazorLibs = { git = "https://github.com/razorlabsorg/razor-libs.git", rev="a80213239a6e8b854cb4ded0aeaee391c7038003" }
 
 [dev-dependencies]
