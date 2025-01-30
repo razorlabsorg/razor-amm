@@ -8,7 +8,7 @@ module razor_amm::oracle_library {
   use razor_amm::amm_pair::{Self, Pair};
   
   use razor_libs::math;
-  use razor_libs::uq64x64;
+  use razor_libs::fixedpoint64;
 
   // helper function that returns the current block timestamp
   #[view]
@@ -25,8 +25,8 @@ module razor_amm::oracle_library {
     let (reserve0, reserve1, block_timestamp_last) = amm_pair::get_reserves(pair);
     if (block_timestamp_last != block_timestamp) {
       let time_elapsed = ((block_timestamp - block_timestamp_last) as u128);
-      let price0_delta = uq64x64::to_u128(uq64x64::fraction(reserve1, reserve0)) * time_elapsed;
-      let price1_delta = uq64x64::to_u128(uq64x64::fraction(reserve0, reserve1)) * time_elapsed;
+      let price0_delta = fixedpoint64::to_u128(fixedpoint64::fraction(reserve1, reserve0)) * time_elapsed;
+      let price1_delta = fixedpoint64::to_u128(fixedpoint64::fraction(reserve0, reserve1)) * time_elapsed;
       price0 = math::overflow_add(price0, price0_delta);
       price1 = math::overflow_add(price1, price1_delta);
     };

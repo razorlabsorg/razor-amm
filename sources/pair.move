@@ -15,7 +15,7 @@ module razor_amm::amm_pair {
   use razor_amm::amm_controller;
 
   use razor_libs::math;
-  use razor_libs::uq64x64;
+  use razor_libs::fixedpoint64;
   use razor_libs::sort;
   use razor_libs::token_utils;
 
@@ -234,10 +234,10 @@ module razor_amm::amm_pair {
     let time_elapsed = ((now - lp.block_timestamp_last) as u128);
     if (time_elapsed > 0 && reserve0 != 0 && reserve1 != 0) {
       // allow overflow u128
-      let price_0_cumulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve1, reserve0)) * time_elapsed;
+      let price_0_cumulative_last_delta = fixedpoint64::to_u128(fixedpoint64::fraction(reserve1, reserve0)) * time_elapsed;
       lp.price_0_cumulative_last = math::overflow_add(lp.price_0_cumulative_last, price_0_cumulative_last_delta);
 
-      let price_1_cumulative_last_delta = uq64x64::to_u128(uq64x64::fraction(reserve0, reserve1)) * time_elapsed;
+      let price_1_cumulative_last_delta = fixedpoint64::to_u128(fixedpoint64::fraction(reserve0, reserve1)) * time_elapsed;
       lp.price_1_cumulative_last = math::overflow_add(lp.price_1_cumulative_last, price_1_cumulative_last_delta);
     };
     lp.block_timestamp_last = now;

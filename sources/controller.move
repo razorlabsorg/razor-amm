@@ -82,13 +82,13 @@ module razor_amm::amm_controller {
   /// Asserts that the protocol is in paused state
   /// Aborts if protocol is not paused
   public fun assert_paused() acquires SwapConfig {
-    assert!(safe_swap_config().paused == true, ERROR_PAUSED);
+    assert!(safe_swap_config().paused == true, ERROR_UNPAUSED);
   }
 
   /// Asserts that the protocol is not paused
   /// Aborts if protocol is paused
   public fun assert_unpaused() acquires SwapConfig {
-    assert!(safe_swap_config().paused == false, ERROR_UNPAUSED);
+    assert!(safe_swap_config().paused == false, ERROR_PAUSED);
   }
 
   /// Pauses the protocol
