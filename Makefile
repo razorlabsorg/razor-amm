@@ -43,6 +43,4 @@ upgrade:
 
 docs:
 	aptos move document \
-	--skip-fetch-latest-git-deps \
-	--skip-attribute-checks \
-	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
+	--named-addresses "razor_amm=$(AMM_ADDRESS)"
