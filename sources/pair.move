@@ -621,6 +621,6 @@ module razor_amm::amm_pair {
     }
   }
 
-  // #[test_only]
-  // friend razor_amm::amm_pair_tests;
+  #[test_only]
+  friend razor_amm::amm_pair_tests;
 }

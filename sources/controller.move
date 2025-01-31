@@ -167,8 +167,8 @@ module razor_amm::amm_controller {
 
   #[test_only]
   friend razor_amm::amm_controller_tests;
-  // #[test_only]
-  // friend razor_amm::amm_pair_tests;
+  #[test_only]
+  friend razor_amm::amm_pair_tests;
 
   #[test_only]
   public fun initialize_for_testing(sender: &signer) {
