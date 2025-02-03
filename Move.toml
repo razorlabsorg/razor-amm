@@ -8,7 +8,7 @@ upgrade_policy = "compatible"
 razor_amm = "_"
 admin = "0x0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a"
 fee_admin = "0x703c20063317af987ab7fc191103d7cd27369ee1322a90d23b174ee393ca9839"
-razor_libs = "0xccc5c4272c290d2315a6b34a06715f0b3d563cffae88f6a779140e774e3c35d6"
+razor_libs = "0x13253effc048095b933b0d2ffe307913b074fb3b9f56780cc2495e18f0e6e14d"
 bob = "0xb0b"
 alice = "0xa11ce"
 
