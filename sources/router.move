@@ -51,6 +51,8 @@ module razor_amm::amm_router {
   const ERROR_INSUFFICIENT_B_AMOUNT: u64 = 12;
   /// Internal Error
   const ERROR_INTERNAL_ERROR: u64 = 13;
+  /// Zero Amount
+  const ERROR_ZERO_AMOUNT: u64 = 14;
 
   const WMOVE: address = @0xa;
   const MIN_PATH_LENGTH: u64 = 2;
@@ -171,7 +173,7 @@ module razor_amm::amm_router {
 
   //===================== ADD LIQUIDITY =======================================
 
-  inline fun add_liquidity_internal(
+  fun add_liquidity_internal(
     sender: &signer,
     tokenA: Object<Metadata>,
     tokenB: Object<Metadata>,
@@ -381,7 +383,7 @@ module razor_amm::amm_router {
 
   //===================== REMOVE LIQUIDITY =======================================
 
-  inline fun remove_liquidity_internal(
+  fun remove_liquidity_internal(
     sender: &signer,
     tokenA: Object<Metadata>,
     tokenB: Object<Metadata>,
@@ -389,12 +391,32 @@ module razor_amm::amm_router {
     amountAMin: u64,
     amountBMin: u64,
   ): (FungibleAsset, FungibleAsset) {
+    // Input validation
+    assert!(liquidity > 0, ERROR_ZERO_AMOUNT);
+    assert!(object::object_address(&tokenA) != object::object_address(&tokenB), ERROR_IDENTICAL_TOKENS);
+    
+    // Get pair and verify it exists
     let pair = amm_pair::liquidity_pool(tokenA, tokenB);
+    
+    // Calculate expected amounts before burning
+    let (reserve_a, reserve_b, _) = amm_pair::get_reserves(pair);
+    let total_supply = amm_pair::lp_token_supply(pair);
+    let expected_a = (liquidity as u128) * (reserve_a as u128) / (total_supply as u128);
+    let expected_b = (liquidity as u128) * (reserve_b as u128) / (total_supply as u128);
+    
+    // Verify expected amounts meet minimum requirements
+    assert!(
+        (expected_a as u64) >= amountAMin && (expected_b as u64) >= amountBMin,
+        ERROR_INSUFFICIENT_OUTPUT_AMOUNT
+    );
     let (redeemedA, redeemedB) = amm_pair::burn(sender, pair, liquidity);
-    let amountA = fungible_asset::amount(&redeemedA);
-    let amountB = fungible_asset::amount(&redeemedB);
-    assert!(amountA >= amountAMin && amountB >= amountBMin, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
-    (redeemedA, redeemedB)
+
+    // Return tokens in correct order based on input order
+    if (sort::is_sorted_two(tokenA, tokenB)) {
+        (redeemedA, redeemedB)
+    } else {
+        (redeemedB, redeemedA)
+    }
   }
 
   public entry fun remove_liquidity(

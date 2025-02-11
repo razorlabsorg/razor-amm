@@ -6,7 +6,6 @@ module razor_amm::amm_controller {
   friend razor_amm::amm_factory;
   friend razor_amm::amm_pair;
   friend razor_amm::amm_oracle;
-  friend razor_amm::amm_zap;
 
   const FEE_ADMIN: address = @fee_admin;
   const ADMIN: address = @admin;
@@ -23,7 +22,6 @@ module razor_amm::amm_controller {
   const ERROR_INVALID_ADDRESS: u64 = 5;
   /// Pending Admin Exists
   const ERROR_PENDING_ADMIN_EXISTS: u64 = 6;
-
 
   /// Configuration object that manages AMM protocol settings and administrative controls.
   /// This is a singleton object stored at the @razor_amm address.

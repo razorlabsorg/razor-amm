@@ -426,14 +426,14 @@ module razor_amm::amm_pair {
 
     let swap_signer = &amm_controller::get_signer();
 
+    fungible_asset::burn_from(&lp.lp_token_refs.burn_ref, store, amount);
+
     let redeemed0 = dispatchable_fungible_asset::withdraw(swap_signer, store0, amount0);
     let redeemed1 = dispatchable_fungible_asset::withdraw(swap_signer, store1, amount1);
     
     let balance0 = fungible_asset::balance(store0); 
     let balance1 = fungible_asset::balance(store1);
     
-    fungible_asset::burn_from(&lp.lp_token_refs.burn_ref, store, amount);
-
     // update interval
     update(lp, balance0, balance1, reserve0, reserve1);
     // feeOn
