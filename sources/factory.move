@@ -187,6 +187,10 @@ module razor_amm::amm_factory {
     amm_controller::set_admin_address(account, admin);
   }
 
+  public entry fun set_fee_to(account: &signer, fee_to: address) {
+    amm_controller::set_fee_to(account, fee_to);
+  }
+
   public entry fun claim_admin(account: &signer) {
     amm_controller::claim_admin(account);
   }

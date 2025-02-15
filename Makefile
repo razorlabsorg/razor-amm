@@ -8,8 +8,8 @@ APTOS_NETWORK ?= custom
 ARTIFACTS_LEVEL ?= sparse
 DEFAULT_FUND_AMOUNT ?= 100000000
 DEFAULT_FUNDER_PRIVATE_KEY ?= 0x0
-DEV_ACCOUNT ?= 0x0133e0a39bdfcf5bbde2b1f4def9f36b2842693345ccc49d6aa6f2ee8c7ccf9a
-AMM_ADDRESS ?= 0xd7f96eefaebffd142905a66d68ea836927b56a95cb424e945ef28cd9353a5425
+DEV_ACCOUNT ?= 0xfaded96b72a03b2ed9e2b2dc0bef0642d63e07fd7b1eeeac047188eb1ef34dd6
+AMM_ADDRESS ?= 0xc4e68f29fa608d2630d11513c8de731b09a975f2f75ea945160491b9bfd36992
 
 # ============================= CLEAN ============================= #
 clean:
@@ -18,29 +18,42 @@ clean:
 # ===================== PACKAGE AMM ===================== #
 
 compile:
-	aptos move compile \
+	movement move compile \
 	--save-metadata \
 	--included-artifacts sparse \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)"
 
 test:
-	aptos move test \
+	movement move test \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--coverage
 
-publish:
-	aptos move deploy-object \
+publish-testnet:
+	movement move create-object-and-publish-package \
 	--included-artifacts sparse \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
 	--address-name razor_amm
 
-upgrade:
-	aptos move upgrade-object \
-	--address-name razor_amm \
+publish-mainnet:
+	movement move create-object-and-publish-package \
 	--included-artifacts sparse \
 	--named-addresses "razor_amm=$(DEV_ACCOUNT)" \
+	--address-name razor_amm \
+	--profile mainnet
+
+upgrade-testnet:
+	movement move upgrade-object-package \
+	--included-artifacts sparse \
+	--named-addresses "razor_amm=$(AMM_ADDRESS)" \
 	--object-address $(AMM_ADDRESS)
 
+upgrade-mainnet:
+	movement move upgrade-object-package \
+	--included-artifacts sparse \
+	--named-addresses "razor_amm=$(AMM_ADDRESS)" \
+	--object-address $(AMM_ADDRESS) \
+	--profile mainnet
+
 docs:
-	aptos move document \
+	movement move document \
 	--named-addresses "razor_amm=$(AMM_ADDRESS)"

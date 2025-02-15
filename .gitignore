@@ -97,6 +97,7 @@ build/
 gas-profiling
 
 .aptos
+.movement
 *.mo
 aptos-framework
 aptos-stdlib
@@ -106,3 +107,5 @@ aptos-token-objects
 move-examples
 move-stdlib
 projects
+
+accounts.json
