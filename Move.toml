@@ -15,8 +15,8 @@ alice = "0xa11ce"
 [dev-addresses]
 
 [dependencies]
-AptosFramework = { git = "https://github.com/aptos-labs/aptos-framework.git", rev="mainnet", subdir = "aptos-framework" }
-AptosStdlib = { git = "https://github.com/aptos-labs/aptos-framework.git", rev="mainnet", subdir = "aptos-stdlib" }
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-framework.git", rev="aptos-release-v1.23", subdir = "aptos-framework" }
+AptosStdlib = { git = "https://github.com/aptos-labs/aptos-framework.git", rev="aptos-release-v1.23", subdir = "aptos-stdlib" }
 RazorLibs = { git = "https://github.com/razorlabsorg/razor-libs.git", rev="main" }
 
 [dev-dependencies]

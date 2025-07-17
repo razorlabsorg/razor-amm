@@ -457,6 +457,14 @@ module razor_amm::amm_pair {
     }
   }
 
+  public fun burn_for_migration(
+    sender: &signer,
+    pair: Object<Pair>,
+    amount: u64,
+  ): (FungibleAsset, FungibleAsset) acquires Pair {
+    burn(sender, pair, amount)
+  }
+
   public(friend) fun swap(
     sender: &signer,
     pair: Object<Pair>,
